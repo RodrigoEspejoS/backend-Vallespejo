@@ -1,7 +1,7 @@
 package com.example.back_vallespejo.controladores;
 
 import com.example.back_vallespejo.models.entities.Rol;
-import com.example.back_vallespejo.services.IRolService;
+import com.example.back_vallespejo.service.IRolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

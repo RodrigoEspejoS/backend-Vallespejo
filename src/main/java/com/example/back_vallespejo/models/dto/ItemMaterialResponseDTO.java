@@ -19,10 +19,10 @@ public class ItemMaterialResponseDTO {
 
     public ItemMaterialResponseDTO() {}
 
-    public ItemMaterialResponseDTO(Long id, String materialNombre, String materialSerie,
-                                            Integer cantidad, Double precioUnitario, Double subtotal,
-                                            String observaciones, LocalDateTime fechaAgregado,
-                                            Long listaMaterialesId, String listaMaterialesNombre) {
+    public ItemMaterialResponseDTO(Long id, String materialNombre, String materialSerie, 
+                                 Integer cantidad, Double precioUnitario, Double subtotal, 
+                                 String observaciones, LocalDateTime fechaAgregado,
+                                 Long listaMaterialesId, String listaMaterialesNombre) {
         this.id = id;
         this.materialNombre = materialNombre;
         this.materialSerie = materialSerie;

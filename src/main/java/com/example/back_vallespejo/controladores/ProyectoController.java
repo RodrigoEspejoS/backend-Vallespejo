@@ -1,13 +1,13 @@
 package com.example.back_vallespejo.controladores;
 
-import com.example.back_vallespejo.models.dto.ProyectoCompletoDTO;
 import com.example.back_vallespejo.models.dto.ProyectoDTO;
+import com.example.back_vallespejo.models.dto.ProyectoCompletoDTO;
 import com.example.back_vallespejo.models.entities.Proyecto;
-import com.example.back_vallespejo.services.IProyectoService;
+import com.example.back_vallespejo.service.IProyectoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 @RestController
 @RequestMapping("/api")

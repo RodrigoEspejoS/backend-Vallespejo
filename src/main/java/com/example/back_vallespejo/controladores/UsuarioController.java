@@ -1,8 +1,8 @@
 package com.example.back_vallespejo.controladores;
 
-import com.example.back_vallespejo.models.dto.UsuarioDTO;
 import com.example.back_vallespejo.models.entities.Usuario;
-import com.example.back_vallespejo.services.IUsuarioService;
+import com.example.back_vallespejo.models.dto.UsuarioDTO;
+import com.example.back_vallespejo.service.IUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

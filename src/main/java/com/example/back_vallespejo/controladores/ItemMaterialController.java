@@ -2,8 +2,8 @@ package com.example.back_vallespejo.controladores;
 
 import com.example.back_vallespejo.models.entities.ItemMaterial;
 import com.example.back_vallespejo.models.entities.ListaMateriales;
-import com.example.back_vallespejo.services.IItemMaterialService;
-import com.example.back_vallespejo.services.IListaMaterialesService;
+import com.example.back_vallespejo.service.IItemMaterialService;
+import com.example.back_vallespejo.service.IListaMaterialesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;

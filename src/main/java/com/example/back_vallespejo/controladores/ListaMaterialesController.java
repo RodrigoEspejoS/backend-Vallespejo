@@ -2,12 +2,12 @@ package com.example.back_vallespejo.controladores;
 
 import com.example.back_vallespejo.models.dto.ItemMaterialDTO;
 import com.example.back_vallespejo.models.dto.ItemMaterialResponseDTO;
-import com.example.back_vallespejo.models.entities.ItemMaterial;
 import com.example.back_vallespejo.models.entities.ListaMateriales;
+import com.example.back_vallespejo.models.entities.ItemMaterial;
 import com.example.back_vallespejo.models.entities.Material;
-import com.example.back_vallespejo.services.IItemMaterialService;
-import com.example.back_vallespejo.services.IListaMaterialesService;
-import com.example.back_vallespejo.services.IMaterialService;
+import com.example.back_vallespejo.service.IListaMaterialesService;
+import com.example.back_vallespejo.service.IItemMaterialService;
+import com.example.back_vallespejo.service.IMaterialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;

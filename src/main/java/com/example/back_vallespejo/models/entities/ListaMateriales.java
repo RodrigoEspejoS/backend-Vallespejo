@@ -38,6 +38,7 @@ public class ListaMateriales {
 
     @NotNull
     @Enumerated(EnumType.STRING)
+
     @Column(nullable = false, columnDefinition = "varchar(255) default 'PENDIENTE'")
     private EstadoLista estado;
 

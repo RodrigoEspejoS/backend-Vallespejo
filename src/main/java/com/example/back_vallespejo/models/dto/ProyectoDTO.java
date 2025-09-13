@@ -2,7 +2,6 @@ package com.example.back_vallespejo.models.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDate;
 
 

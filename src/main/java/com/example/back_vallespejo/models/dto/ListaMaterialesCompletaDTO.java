@@ -20,9 +20,9 @@ public class ListaMaterialesCompletaDTO {
     }
 
     // Este constructor es todo lo que se va a mostrar en la respuesta JSON.
-    public ListaMaterialesCompletaDTO(Long id, String nombre, String descripcion,
-                                        LocalDateTime fechaCreacion, LocalDateTime fechaModificacion,
-                                        Double totalEstimado, List<ItemMaterialResponseDTO> items) {
+    public ListaMaterialesCompletaDTO(Long id, String nombre, String descripcion, 
+                                    LocalDateTime fechaCreacion, LocalDateTime fechaModificacion, 
+                                    Double totalEstimado, List<ItemMaterialResponseDTO> items) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
