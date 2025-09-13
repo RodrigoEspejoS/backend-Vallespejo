@@ -19,7 +19,7 @@ public class ProyectoCompletoDTO {
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaModificacion;
     private String usuarioCreadorNombre;
-    private List<U_ListaMaterialesCompletaDTO> listasMateriales;
+    private List<ListaMaterialesCompletaDTO> listasMateriales;
 
     public ProyectoCompletoDTO() {
     }
@@ -29,7 +29,7 @@ public class ProyectoCompletoDTO {
                              LocalDateTime fechaInicio, LocalDateTime fechaEstimadaFinalizacion, 
                              String estado, Double presupuestoEstimado, LocalDateTime fechaCreacion, 
                              LocalDateTime fechaModificacion, String usuarioCreadorNombre, 
-                             List<U_ListaMaterialesCompletaDTO> listasMateriales) {
+                             List<ListaMaterialesCompletaDTO> listasMateriales) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -132,11 +132,11 @@ public class ProyectoCompletoDTO {
         this.usuarioCreadorNombre = usuarioCreadorNombre;
     }
 
-    public List<U_ListaMaterialesCompletaDTO> getListasMateriales() {
+    public List<ListaMaterialesCompletaDTO> getListasMateriales() {
         return listasMateriales;
     }
 
-    public void setListasMateriales(List<U_ListaMaterialesCompletaDTO> listasMateriales) {
+    public void setListasMateriales(List<ListaMaterialesCompletaDTO> listasMateriales) {
         this.listasMateriales = listasMateriales;
     }
 }

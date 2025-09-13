@@ -12,7 +12,7 @@ import java.util.List;
  *  Lista de materiales - <proyecto>, toma el mismo usuarioid del que creó el proyecto.)
  * Creando una lista de materiales vacia automaticamente por cada Proyecto.
  */
-public class U_ListaMaterialesDTO {
+public class ListaMaterialesDTO {
 
     @NotBlank(message = "El nombre de la lista es obligatorio")
     private String nombre;
@@ -23,11 +23,11 @@ public class U_ListaMaterialesDTO {
     private Long usuarioId;
 
     @Valid
-    private List<U_ItemListaMaterialesDTO> items;
+    private List<ItemMaterialDTO> items;
 
-    public U_ListaMaterialesDTO() {}
+    public ListaMaterialesDTO() {}
 
-    public U_ListaMaterialesDTO(String nombre, Long usuarioId, List<U_ItemListaMaterialesDTO> items) {
+    public ListaMaterialesDTO(String nombre, Long usuarioId, List<ItemMaterialDTO> items) {
         this.nombre = nombre;
         this.usuarioId = usuarioId;
         this.items = items;
@@ -57,11 +57,11 @@ public class U_ListaMaterialesDTO {
         this.usuarioId = usuarioId;
     }
 
-    public List<U_ItemListaMaterialesDTO> getItems() {
+    public List<ItemMaterialDTO> getItems() {
         return items;
     }
 
-    public void setItems(List<U_ItemListaMaterialesDTO> items) {
+    public void setItems(List<ItemMaterialDTO> items) {
         this.items = items;
     }
 }

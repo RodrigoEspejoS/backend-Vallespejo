@@ -1,9 +1,9 @@
 package com.example.back_vallespejo.controladores;
 
-import com.example.back_vallespejo.models.entities.U_ItemListaMateriales;
-import com.example.back_vallespejo.models.entities.U_ListaMateriales;
-import com.example.back_vallespejo.services.IU_ItemListaMaterialesService;
-import com.example.back_vallespejo.services.IU_ListaMaterialesService;
+import com.example.back_vallespejo.models.entities.ItemMaterial;
+import com.example.back_vallespejo.models.entities.ListaMateriales;
+import com.example.back_vallespejo.services.IItemMaterialService;
+import com.example.back_vallespejo.services.IListaMaterialesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.*;
 public class ItemMaterialController {
 
     @Autowired
-    private IU_ItemListaMaterialesService itemMaterialService;
+    private IItemMaterialService itemMaterialService;
 
     @Autowired
-    private IU_ListaMaterialesService listaMaterialesService;
+    private IListaMaterialesService listaMaterialesService;
 
 
     @DeleteMapping("/lista-materiales/{listaId}/items/{itemId}")
@@ -26,10 +26,10 @@ public class ItemMaterialController {
         try {
 
             // Estos 3 métodos son para control de errores en caso no se encuentre la lista Material, o el Item.
-            U_ListaMateriales listaMateriales = listaMaterialesService.findById(listaId);
+            ListaMateriales listaMateriales = listaMaterialesService.findById(listaId);
             
 
-            U_ItemListaMateriales itemMaterial = itemMaterialService.findById(itemId);
+            ItemMaterial itemMaterial = itemMaterialService.findById(itemId);
             
             // Nota R para los news: Este metodo (delete) ya está implementado en el ItemMaterialService lo puedes ver
             // en la carpeta service.

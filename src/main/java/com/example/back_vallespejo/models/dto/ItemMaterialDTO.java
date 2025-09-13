@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 /* Nota Rodri: Este DTO sirve para la creación (el modelo JSON de POST) de un ItemMaterial */
-public class U_ItemListaMaterialesDTO {
+public class ItemMaterialDTO {
 
     @NotNull(message = "El ID del material es obligatorio")
     private Long materialId;
@@ -16,10 +16,10 @@ public class U_ItemListaMaterialesDTO {
     private String observaciones;
 
     
-    public U_ItemListaMaterialesDTO() {}
+    public ItemMaterialDTO() {}
 
     // Nota: Este constructor sirve especificamente como lo minimo requerido para crear una item_Material para una listaMaterial.
-    public U_ItemListaMaterialesDTO(Long materialId, Integer cantidad) {
+    public ItemMaterialDTO(Long materialId, Integer cantidad) {
         this.materialId = materialId;
         this.cantidad = cantidad;
     }

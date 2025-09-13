@@ -6,23 +6,23 @@ import java.util.List;
 
 /*Nota Rodri: Este DTO es para el GET de ListaMateriales donde se muestra todo 
  * el contenido de una lista ya completa.*/
-public class U_ListaMaterialesCompletaDTO {
+public class ListaMaterialesCompletaDTO {
     private Long id;
     private String nombre;
     private String descripcion;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaModificacion;
     private Double totalEstimado;
-    private List<U_ItemListaMaterialesResponseDTO> items;
+    private List<ItemMaterialResponseDTO> items;
 
     
-    public U_ListaMaterialesCompletaDTO() {
+    public ListaMaterialesCompletaDTO() {
     }
 
     // Este constructor es todo lo que se va a mostrar en la respuesta JSON.
-    public U_ListaMaterialesCompletaDTO(Long id, String nombre, String descripcion,
+    public ListaMaterialesCompletaDTO(Long id, String nombre, String descripcion,
                                         LocalDateTime fechaCreacion, LocalDateTime fechaModificacion,
-                                        Double totalEstimado, List<U_ItemListaMaterialesResponseDTO> items) {
+                                        Double totalEstimado, List<ItemMaterialResponseDTO> items) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -81,11 +81,11 @@ public class U_ListaMaterialesCompletaDTO {
         this.totalEstimado = totalEstimado;
     }
 
-    public List<U_ItemListaMaterialesResponseDTO> getItems() {
+    public List<ItemMaterialResponseDTO> getItems() {
         return items;
     }
 
-    public void setItems(List<U_ItemListaMaterialesResponseDTO> items) {
+    public void setItems(List<ItemMaterialResponseDTO> items) {
         this.items = items;
     }
 }

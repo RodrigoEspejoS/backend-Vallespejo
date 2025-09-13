@@ -1,12 +1,12 @@
 package com.example.back_vallespejo.controladores;
 
-import com.example.back_vallespejo.models.dto.U_ItemListaMaterialesDTO;
-import com.example.back_vallespejo.models.dto.U_ItemListaMaterialesResponseDTO;
-import com.example.back_vallespejo.models.entities.U_ItemListaMateriales;
-import com.example.back_vallespejo.models.entities.U_ListaMateriales;
+import com.example.back_vallespejo.models.dto.ItemMaterialDTO;
+import com.example.back_vallespejo.models.dto.ItemMaterialResponseDTO;
+import com.example.back_vallespejo.models.entities.ItemMaterial;
+import com.example.back_vallespejo.models.entities.ListaMateriales;
 import com.example.back_vallespejo.models.entities.Material;
-import com.example.back_vallespejo.services.IU_ItemListaMaterialesService;
-import com.example.back_vallespejo.services.IU_ListaMaterialesService;
+import com.example.back_vallespejo.services.IItemMaterialService;
+import com.example.back_vallespejo.services.IListaMaterialesService;
 import com.example.back_vallespejo.services.IMaterialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,10 +23,10 @@ import java.util.stream.Collectors;
 public class ListaMaterialesController {
 
     @Autowired
-    private IU_ListaMaterialesService listaMaterialesService;
+    private IListaMaterialesService listaMaterialesService;
 
     @Autowired
-    private IU_ItemListaMaterialesService itemMaterialService;
+    private IItemMaterialService itemMaterialService;
 
     @Autowired
     private IMaterialService materialService;
@@ -35,7 +35,7 @@ public class ListaMaterialesController {
     @Transactional
     public void eliminarListaMateriales(@PathVariable Long id){
         try {
-            U_ListaMateriales listaMateriales = listaMaterialesService.findById(id);
+            ListaMateriales listaMateriales = listaMaterialesService.findById(id);
 
             listaMaterialesService.delete(listaMateriales);
                 
@@ -48,15 +48,15 @@ public class ListaMaterialesController {
     @PostMapping("/lista-materiales/{listaId}")
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public U_ItemListaMaterialesResponseDTO agregarItemALista(@PathVariable Long listaId, @RequestBody U_ItemListaMaterialesDTO itemDTO){
+    public ItemMaterialResponseDTO agregarItemALista(@PathVariable Long listaId, @RequestBody ItemMaterialDTO itemDTO){
         // Buscar la lista de materiales
-        U_ListaMateriales listaMateriales = listaMaterialesService.findById(listaId);
+        ListaMateriales listaMateriales = listaMaterialesService.findById(listaId);
 
         // Buscar el material
         Material material = materialService.findById(itemDTO.getMaterialId());
 
         // Crear el nuevo item
-        U_ItemListaMateriales nuevoItem = new U_ItemListaMateriales();
+        ItemMaterial nuevoItem = new ItemMaterial();
         nuevoItem.setListaMateriales(listaMateriales);
         nuevoItem.setMaterial(material);
         nuevoItem.setCantidad(itemDTO.getCantidad());
@@ -64,14 +64,14 @@ public class ListaMaterialesController {
         nuevoItem.setFechaAgregado(LocalDateTime.now());
 
         // Guardar el item
-        U_ItemListaMateriales itemGuardado = itemMaterialService.registrarItemMaterial(nuevoItem);
+        ItemMaterial itemGuardado = itemMaterialService.registrarItemMaterial(nuevoItem);
 
         // Actualizar la fecha de modificación de la lista
         listaMateriales.actualizarFechaModificacion();
         listaMaterialesService.registrarListaMateriales(listaMateriales);
 
         // Crear DTO de respuesta para evitar problemas de serialización
-        return new U_ItemListaMaterialesResponseDTO(
+        return new ItemMaterialResponseDTO(
             itemGuardado.getId(),
             material.getNombre(),
             material.getSerie(),
@@ -88,16 +88,16 @@ public class ListaMaterialesController {
     // Endpoint para obtener todos los items de una lista específica
     @GetMapping("/lista-materiales/{listaId}")
     @Transactional(readOnly = true)
-    public List<U_ItemListaMaterialesResponseDTO> getItemsPorLista(@PathVariable Long listaId){
-        U_ListaMateriales listaMateriales = listaMaterialesService.findById(listaId);
+    public List<ItemMaterialResponseDTO> getItemsPorLista(@PathVariable Long listaId){
+        ListaMateriales listaMateriales = listaMaterialesService.findById(listaId);
         if(listaMateriales == null){
             throw new RuntimeException("Lista de materiales no encontrada con ID: " + listaId);
         }
-        List<U_ItemListaMateriales> items = itemMaterialService.findByListaMateriales(listaMateriales);
+        List<ItemMaterial> items = itemMaterialService.findByListaMateriales(listaMateriales);
         
         // Convertir a DTOs para evitar problemas de serialización
         return items.stream()
-            .map(item -> new U_ItemListaMaterialesResponseDTO(
+            .map(item -> new ItemMaterialResponseDTO(
                 item.getId(),
                 item.getMaterial().getNombre(),
                 item.getMaterial().getSerie(),

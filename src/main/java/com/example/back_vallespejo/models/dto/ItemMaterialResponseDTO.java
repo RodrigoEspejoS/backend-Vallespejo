@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 /* Nota Rodri: Este DTO es especificamente solo para respuesta en JSON. */
 
-public class U_ItemListaMaterialesResponseDTO {
+public class ItemMaterialResponseDTO {
     
     private Long id;
     private String materialNombre;
@@ -17,9 +17,9 @@ public class U_ItemListaMaterialesResponseDTO {
     private Long listaMaterialesId;
     private String listaMaterialesNombre;
 
-    public U_ItemListaMaterialesResponseDTO() {}
+    public ItemMaterialResponseDTO() {}
 
-    public U_ItemListaMaterialesResponseDTO(Long id, String materialNombre, String materialSerie,
+    public ItemMaterialResponseDTO(Long id, String materialNombre, String materialSerie,
                                             Integer cantidad, Double precioUnitario, Double subtotal,
                                             String observaciones, LocalDateTime fechaAgregado,
                                             Long listaMaterialesId, String listaMaterialesNombre) {
