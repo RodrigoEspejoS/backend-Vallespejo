@@ -22,7 +22,7 @@ public class ItemMaterial {
     private ListaMateriales listaMateriales;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "material_id", nullable = false)
     private Material material;
 
