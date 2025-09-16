@@ -1,6 +1,5 @@
 package com.example.back_vallespejo.models.dto;
 
-import java.time.LocalDateTime;
 
 /* Nota Rodri: Este DTO es especificamente solo para respuesta en JSON. */
 

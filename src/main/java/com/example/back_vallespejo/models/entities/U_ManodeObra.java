@@ -2,7 +2,6 @@ package com.example.back_vallespejo.models.entities;
 
 import jakarta.persistence.*;
 
-import java.lang.module.FindException;
 import java.util.List;
 
 @Entity

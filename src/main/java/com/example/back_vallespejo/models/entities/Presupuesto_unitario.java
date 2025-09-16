@@ -1,7 +1,6 @@
 package com.example.back_vallespejo.models.entities;
 
 import jakarta.persistence.*;
-import jdk.jfr.Unsigned;
 
 @Entity
 @Table(name = "presupuestos_unitarios")

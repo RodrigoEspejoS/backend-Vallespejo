@@ -2,7 +2,6 @@ package com.example.back_vallespejo.models.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jdk.jfr.Unsigned;
 
 @Entity
 @Table(name = "unitario_item_equiposyherramientas")
