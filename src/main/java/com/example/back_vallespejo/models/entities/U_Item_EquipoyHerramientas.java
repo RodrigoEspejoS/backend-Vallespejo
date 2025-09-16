@@ -1,17 +1,22 @@
 package com.example.back_vallespejo.models.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-
-import java.time.LocalDateTime;
+import jdk.jfr.Unsigned;
 
 @Entity
-@Table(name = "tabla_de_datos_presupuestos")
-public class TD_Presupuestos {
+@Table(name = "unitario_item_equiposyherramientas")
+public class U_Item_EquipoyHerramientas {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "U_EquipoyHerramientas_id",nullable = false)
+    private U_EquipoyHerramientas uEquipoyHerramientas;
+
+
 
     @NotNull
     @Column(unique = true, length = 7)
@@ -29,12 +34,11 @@ public class TD_Presupuestos {
     private String unidad;
 
     @NotNull
+    private Double cantidad;
+
+    @NotNull
     private Double precio_unitario_recurso;
 
-    @Column(nullable = false)
-    private LocalDateTime fechaAgregado;
+    private Double subTotal_precio_unitario;
 
-    @NotBlank
-    @Column(length = 20)
-    private String categoria;
 }

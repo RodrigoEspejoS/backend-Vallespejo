@@ -18,17 +18,14 @@ public class ListaMaterialesDTO {
 
     private String descripcion;
 
-    @NotNull(message = "El ID del usuario es obligatorio")
-    private Long usuarioId;
 
     @Valid
     private List<ItemMaterialDTO> items;
 
     public ListaMaterialesDTO() {}
 
-    public ListaMaterialesDTO(String nombre, Long usuarioId, List<ItemMaterialDTO> items) {
+    public ListaMaterialesDTO(String nombre, List<ItemMaterialDTO> items) {
         this.nombre = nombre;
-        this.usuarioId = usuarioId;
         this.items = items;
     }
 
@@ -48,13 +45,6 @@ public class ListaMaterialesDTO {
         this.descripcion = descripcion;
     }
 
-    public Long getUsuarioId() {
-        return usuarioId;
-    }
-
-    public void setUsuarioId(Long usuarioId) {
-        this.usuarioId = usuarioId;
-    }
 
     public List<ItemMaterialDTO> getItems() {
         return items;

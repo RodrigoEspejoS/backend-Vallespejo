@@ -72,7 +72,6 @@ public class ProyectoServiceImpl implements IProyectoService {
             // Crear una lista de materiales nueva
             listaMateriales = new ListaMateriales();
             listaMateriales.setNombre("Lista de materiales - " + proyecto.getNombre());
-            listaMateriales.setUsuario(usuario); // Asignar el usuario
             listaMateriales.setFechaCreacion(LocalDateTime.now());
             listaMateriales.setEstado(ListaMateriales.EstadoLista.PENDIENTE); // Asignar estado por defecto
         }
@@ -136,10 +135,8 @@ public class ProyectoServiceImpl implements IProyectoService {
                         item.getMaterial().getNombre(),
                         item.getMaterial().getSerie(),
                         item.getCantidad(),
-                        item.getPrecioUnitario(),
-                        item.getSubtotal(),
-                        item.getObservaciones(),
-                        item.getFechaAgregado(),
+                        item.getPrecioUnitarioRecurso(),
+                        item.getSubtotal_PrecioUnitario(),
                         item.getListaMateriales().getId(),
                         item.getListaMateriales().getNombre()
                     ))

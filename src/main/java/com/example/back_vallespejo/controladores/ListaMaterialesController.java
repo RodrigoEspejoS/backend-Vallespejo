@@ -60,8 +60,6 @@ public class ListaMaterialesController {
         nuevoItem.setListaMateriales(listaMateriales);
         nuevoItem.setMaterial(material);
         nuevoItem.setCantidad(itemDTO.getCantidad());
-        nuevoItem.setObservaciones(itemDTO.getObservaciones());
-        nuevoItem.setFechaAgregado(LocalDateTime.now());
 
         // Guardar el item
         ItemMaterial itemGuardado = itemMaterialService.registrarItemMaterial(nuevoItem);
@@ -76,10 +74,8 @@ public class ListaMaterialesController {
             material.getNombre(),
             material.getSerie(),
             itemGuardado.getCantidad(),
-            itemGuardado.getPrecioUnitario(),
-            itemGuardado.getSubtotal(),
-            itemGuardado.getObservaciones(),
-            itemGuardado.getFechaAgregado(),
+            itemGuardado.getPrecioUnitarioRecurso(),
+            itemGuardado.getSubtotal_PrecioUnitario(),
             listaMateriales.getId(),
             listaMateriales.getNombre()
         );
@@ -102,10 +98,8 @@ public class ListaMaterialesController {
                 item.getMaterial().getNombre(),
                 item.getMaterial().getSerie(),
                 item.getCantidad(),
-                item.getPrecioUnitario(),
-                item.getSubtotal(),
-                item.getObservaciones(),
-                item.getFechaAgregado(),
+                item.getPrecioUnitarioRecurso(),
+                item.getSubtotal_PrecioUnitario(),
                 item.getListaMateriales().getId(),
                 item.getListaMateriales().getNombre()
             ))

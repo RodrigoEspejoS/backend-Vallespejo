@@ -25,11 +25,6 @@ public class ListaMateriales {
     @Column(length = 500)
     private String descripcion;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
-
     @Column(nullable = false)
     private LocalDateTime fechaCreacion;
 
@@ -38,7 +33,6 @@ public class ListaMateriales {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-
     @Column(nullable = false, columnDefinition = "varchar(255) default 'PENDIENTE'")
     private EstadoLista estado;
 
@@ -75,14 +69,6 @@ public class ListaMateriales {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
     }
 
     public LocalDateTime getFechaCreacion() {
