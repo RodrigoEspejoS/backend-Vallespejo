@@ -8,6 +8,7 @@ import com.example.back_vallespejo.models.entities.Usuario;
 import java.util.List;
 
 public interface IProyectoService {
+    boolean agregarActividadAProyecto(Long proyectoId, String nombreActividad);
     public List<Proyecto> getAll();
     public Proyecto registrarProyecto(Proyecto proyecto);
     public Proyecto crearProyectoDesdeDTO(ProyectoDTO proyectoDTO);

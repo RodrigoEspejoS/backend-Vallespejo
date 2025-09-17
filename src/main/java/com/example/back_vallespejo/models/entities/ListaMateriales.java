@@ -18,7 +18,7 @@ public class ListaMateriales {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    
     @Column(nullable = false, length = 100)
     private String nombre;
 
@@ -31,7 +31,7 @@ public class ListaMateriales {
     @Column
     private LocalDateTime fechaActualizacion;
 
-    @NotNull
+    
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "varchar(255) default 'PENDIENTE'")
     private EstadoLista estado;
@@ -39,7 +39,8 @@ public class ListaMateriales {
     @Column
     private Double totalEstimado;
 
-    @OneToOne(mappedBy = "listaMateriales", fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "proyecto_id")
     @JsonIgnore
     private Proyecto proyecto;
 
@@ -96,7 +97,19 @@ public class ListaMateriales {
     }
 
     public Double getTotalEstimado() {
-        return totalEstimado;
+            if (items == null || items.isEmpty()) {
+                this.totalEstimado = 0.0;
+                return totalEstimado;
+            }
+            double suma = 0.0;
+            for (ItemMaterial item : items) {
+                if (item != null) {
+                    item.calcularSubtotal();
+                    suma += item.getSubtotal_PrecioUnitario();
+                }
+            }
+            this.totalEstimado = suma;
+            return totalEstimado;
     }
 
     public void setTotalEstimado(Double totalEstimado) {

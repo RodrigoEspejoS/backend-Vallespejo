@@ -17,13 +17,13 @@ public class ProyectoDTO {
     @NotNull(message = "El ID del usuario responsable es obligatorio")
     private Long usuarioResponsableId;
 
-    private Long listaMaterialesId;
+    // Ya no se usa listaMaterialesId, el vínculo es con Presupuesto_General
 
     private LocalDate fechaInicio;
 
     private LocalDate fechaFinEstimada;
 
-    @NotNull(message = "El presupuesto es obligatorio")
+    // Presupuesto ahora es opcional al crear; puede calcularse luego
     private Double presupuesto;
 
     private String estado;
@@ -33,10 +33,9 @@ public class ProyectoDTO {
     public ProyectoDTO() {}
 
     // Atributos minimos para la creación de un proyecto
-    public ProyectoDTO(String nombre, Long usuarioResponsableId, Double presupuesto) {
+    public ProyectoDTO(String nombre, Long usuarioResponsableId) {
         this.nombre = nombre;
         this.usuarioResponsableId = usuarioResponsableId;
-        this.presupuesto = presupuesto;
     }
 
     
@@ -62,14 +61,6 @@ public class ProyectoDTO {
 
     public void setUsuarioResponsableId(Long usuarioResponsableId) {
         this.usuarioResponsableId = usuarioResponsableId;
-    }
-
-    public Long getListaMaterialesId() {
-        return listaMaterialesId;
-    }
-
-    public void setListaMaterialesId(Long listaMaterialesId) {
-        this.listaMaterialesId = listaMaterialesId;
     }
 
     public LocalDate getFechaInicio() {

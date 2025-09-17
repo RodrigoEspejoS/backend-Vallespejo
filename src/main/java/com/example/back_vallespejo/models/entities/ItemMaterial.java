@@ -15,32 +15,32 @@ public class ItemMaterial {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lista_materiales_id", nullable = false)
     private ListaMateriales listaMateriales;
 
-    @NotNull
+    
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "material_id", nullable = false)
     private Material material;
 
-    @NotNull
+    
     @Column(unique = true, length = 7)
     private String codigo;
 
-    @NotNull
+    
     @Column(length = 50, unique = true)
     private String desc_recurso;
 
-    @NotNull
+    
     private Double cuadrilla;
 
     //unidad de medida (h-h, VIAJE,%MO)
-    @NotNull
+    
     private String unidad;
 
-    @NotNull
+    
     @Min(value = 1)
     @Column(nullable = false)
     private Integer cantidad;
@@ -104,6 +104,11 @@ public class ItemMaterial {
     public void setSubtotal_PrecioUnitario(Double subtotal_PrecioUnitario) {
         this.subtotal_PrecioUnitario = subtotal_PrecioUnitario;
     }
+
+    public String getCodigo() { return codigo; }
+    public String getDesc_recurso() { return desc_recurso; }
+    public String getUnidad() { return unidad; }
+    public Double getCuadrilla() { return cuadrilla; }
 
 
     // Métodos de conveniencia

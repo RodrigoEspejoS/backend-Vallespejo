@@ -39,13 +39,4 @@ public class ListaMaterialesServiceImpl implements IListaMaterialesService {
         listaMaterialesDAO.delete(listaMateriales);
     }
 
-    @Override
-    public List<ListaMateriales> findByUsuario(Usuario usuario) {
-        return listaMaterialesDAO.findByUsuario(usuario);
-    }
-
-    @Override
-    public List<ListaMateriales> findByProyecto(Proyecto proyecto) {
-        return listaMaterialesDAO.findByProyecto(proyecto);
-    }
 }

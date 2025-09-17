@@ -19,7 +19,7 @@ public class ProyectoCompletoDTO {
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaModificacion;
     private String usuarioCreadorNombre;
-    private List<ListaMaterialesCompletaDTO> listasMateriales;
+    private PresupuestoGeneralDTO presupuestoGeneral;
 
     public ProyectoCompletoDTO() {
     }
@@ -29,7 +29,7 @@ public class ProyectoCompletoDTO {
                              LocalDateTime fechaInicio, LocalDateTime fechaEstimadaFinalizacion, 
                              String estado, Double presupuestoEstimado, LocalDateTime fechaCreacion, 
                              LocalDateTime fechaModificacion, String usuarioCreadorNombre, 
-                             List<ListaMaterialesCompletaDTO> listasMateriales) {
+                             PresupuestoGeneralDTO presupuestoGeneral) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -41,7 +41,7 @@ public class ProyectoCompletoDTO {
         this.fechaCreacion = fechaCreacion;
         this.fechaModificacion = fechaModificacion;
         this.usuarioCreadorNombre = usuarioCreadorNombre;
-        this.listasMateriales = listasMateriales;
+        this.presupuestoGeneral = presupuestoGeneral;
     }
 
     public Long getId() {
@@ -132,11 +132,6 @@ public class ProyectoCompletoDTO {
         this.usuarioCreadorNombre = usuarioCreadorNombre;
     }
 
-    public List<ListaMaterialesCompletaDTO> getListasMateriales() {
-        return listasMateriales;
-    }
-
-    public void setListasMateriales(List<ListaMaterialesCompletaDTO> listasMateriales) {
-        this.listasMateriales = listasMateriales;
-    }
+    public PresupuestoGeneralDTO getPresupuestoGeneral() { return presupuestoGeneral; }
+    public void setPresupuestoGeneral(PresupuestoGeneralDTO presupuestoGeneral) { this.presupuestoGeneral = presupuestoGeneral; }
 }

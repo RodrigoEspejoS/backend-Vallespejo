@@ -11,8 +11,4 @@ public interface IListaMaterialesService {
     public ListaMateriales registrarListaMateriales(ListaMateriales listaMateriales);
     public ListaMateriales findById(Long id);
     public void delete(ListaMateriales listaMateriales);
-
-    //Metodos agregados a los convencionales
-    public List<ListaMateriales> findByUsuario(Usuario usuario);
-    public List<ListaMateriales> findByProyecto(Proyecto proyecto);
 }
