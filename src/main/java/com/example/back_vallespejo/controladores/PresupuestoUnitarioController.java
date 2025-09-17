@@ -132,14 +132,6 @@ public class PresupuestoUnitarioController {
     @Autowired
     private IMaterialDAO materialDAO;
 
-    @PostMapping("/presupuesto-unitario")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Presupuesto_unitario crearPresupuestoUnitario(@RequestBody Presupuesto_unitario presupuestoUnitario) {
-        // Se espera que el presupuestoUnitario recibido ya tenga sus listas asociadas
-        return presupuestoUnitarioService.registrar(presupuestoUnitario);
-    }
-
-
     @GetMapping("/presupuesto-unitario/{id}")
     public java.util.Map<String,Object> obtenerPorId(@PathVariable Long id) {
         Presupuesto_unitario presupuesto = presupuestoUnitarioService.findById(id);
@@ -257,10 +249,5 @@ public class PresupuestoUnitarioController {
     @GetMapping("/presupuesto-unitario/{id}/items/mano-obra")
     public java.util.List<com.example.back_vallespejo.models.dto.ItemPresupuestoDTO> obtenerItemsManoObra(@PathVariable Long id) {
         return presupuestoUnitarioService.obtenerItemsManoObra(id);
-    }
-
-    @GetMapping("/presupuesto-unitario")
-    public List<Presupuesto_unitario> getAllPresupuestosUnitarios() {
-        return presupuestoUnitarioService.getAll();
     }
 }
