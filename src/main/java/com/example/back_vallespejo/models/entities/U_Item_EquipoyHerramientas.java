@@ -12,7 +12,6 @@ public class U_Item_EquipoyHerramientas {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "U_EquipoyHerramientas_id",nullable = false)
     private U_EquipoyHerramientas uEquipoyHerramientas;

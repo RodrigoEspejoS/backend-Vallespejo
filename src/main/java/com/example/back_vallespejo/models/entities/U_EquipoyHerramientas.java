@@ -17,6 +17,20 @@ public class U_EquipoyHerramientas {
     @OneToMany(mappedBy = "uEquipoyHerramientas",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<U_Item_EquipoyHerramientas> uItemEquipoyHerramientas;
 
+    // Sub total de todos los items dentro de la lista
+    // Inicializado para cumplir la validación @NotNull al momento de persistir
+    
+    @Column(name = "sub_total_eyh", nullable = false)
+    private Double subTotal_EyH = 0.0;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public List<U_Item_EquipoyHerramientas> getUItemEquipoyHerramientas() {
         return uItemEquipoyHerramientas;
     }
@@ -25,14 +39,13 @@ public class U_EquipoyHerramientas {
         this.uItemEquipoyHerramientas = uItemEquipoyHerramientas;
     }
 
-    // Sub total de todos los items dentro de la lista
-    // Inicializado para cumplir la validación @NotNull al momento de persistir
-    
-    @Column(name = "sub_total_eyh", nullable = false)
-    private Double subTotal_EyH = 0.0;
+    public Double getSubTotal_EyH() {
+        return subTotal_EyH;
+    }
 
-
-
+    public void setSubTotal_EyH(Double subTotal_EyH) {
+        this.subTotal_EyH = subTotal_EyH;
+    }
 
     public Double getSubtotal() {
         if (uItemEquipoyHerramientas == null || uItemEquipoyHerramientas.isEmpty()) {
@@ -50,7 +63,4 @@ public class U_EquipoyHerramientas {
         return subTotal_EyH;
     }
 
-    public void setSubTotalEyH(Double subTotal) {
-        this.subTotal_EyH = (subTotal != null ? subTotal : 0.0);
-    }
 }

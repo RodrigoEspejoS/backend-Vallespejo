@@ -55,7 +55,4 @@ public class TD_Presupuestos {
     public void setCategoria(String categoria) { this.categoria = categoria; }
     public Double getPrecioUnitario() { return precioUnitario; }
     public void setPrecioUnitario(Double precioUnitario) { this.precioUnitario = precioUnitario; }
-    // Alias para compatibilidad si algún código antiguo esperaba getPrecio_unitario_recurso
-    @Deprecated
-    public Double getPrecio_unitario_recurso() { return precioUnitario; }
 }

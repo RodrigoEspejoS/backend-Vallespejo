@@ -2,8 +2,8 @@ package com.example.back_vallespejo.models.dto;
 
 public class ItemCatalogoResponseDTO {
     private Long id; // id del item
-    private String tipo; // MATERIAL | EQUIPO | MANO_OBRA
-    private Long catalogoId; // materialId o tdPresupuestoId
+    private String tipo; // EQUIPO | MANO_OBRA
+    private Long catalogoId; // tdPresupuestoId
     private String codigo;
     private String descripcion;
     private String unidad;

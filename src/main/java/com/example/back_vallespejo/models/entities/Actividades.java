@@ -27,17 +27,27 @@ public class Actividades {
     @JoinColumn(name = "presupuesto_unitario_id", referencedColumnName = "id", nullable = false)
     private Presupuesto_unitario presupuestoUnitario;
 
+    public Long getId() {
+        return id;
+    }
 
-    public String getNombre() {
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public @NotBlank String getNombre() {
         return nombre;
     }
-    public void setNombre(String nombre) {
+
+    public void setNombre(@NotBlank String nombre) {
         this.nombre = nombre;
     }
-    public String getDescripcion() {
+
+    public @NotBlank String getDescripcion() {
         return descripcion;
     }
-    public void setDescripcion(String descripcion) {
+
+    public void setDescripcion(@NotBlank String descripcion) {
         this.descripcion = descripcion;
     }
 
