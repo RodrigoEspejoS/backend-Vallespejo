@@ -1,10 +1,10 @@
 package com.example.back_vallespejo.models.dto;
 
-// Usado para crear item de equipo o mano de obra a partir de un TD_Presupuestos
+// Nota Rodrigo para crear item de equipo o mano de obra a partir de un TD_Presupuestos
 public class AddItemCatalogRequest {
     private Long tdPresupuestoId;
-    private Double cantidad; // opcional (default 1.0)
-    private Double precioOverride; // opcional para permitir override (si se desea)
+    private Double cantidad; 
+    private Double precioOverride; // Permite sobreescribir el precio unitario si es necesario
 
     public Long getTdPresupuestoId() { return tdPresupuestoId; }
     public void setTdPresupuestoId(Long tdPresupuestoId) { this.tdPresupuestoId = tdPresupuestoId; }

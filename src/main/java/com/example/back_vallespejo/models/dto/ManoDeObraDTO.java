@@ -1,6 +1,8 @@
 package com.example.back_vallespejo.models.dto;
 import java.util.List;
 
+/* Nota: Este DTO sirve para usarlo en PresupuestoUnitarioDTO 
+para mostrar la lista de mano de obra*/
 public class ManoDeObraDTO {
     private Long id;
     private Double subtotal;

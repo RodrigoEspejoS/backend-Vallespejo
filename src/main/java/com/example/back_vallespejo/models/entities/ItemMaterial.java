@@ -26,20 +26,12 @@ public class ItemMaterial {
     private Material material;
 
     
-    @Column(unique = true, length = 7)
+    @Column(length = 7)
     private String codigo;
 
     
-    @Column(length = 50, unique = true)
+    @Column(length = 50)
     private String desc_recurso;
-
-    
-    private Double cuadrilla;
-
-    //unidad de medida (h-h, VIAJE,%MO)
-    
-    private String unidad;
-
     
     @Min(value = 1)
     @Column(nullable = false)
@@ -107,8 +99,6 @@ public class ItemMaterial {
 
     public String getCodigo() { return codigo; }
     public String getDesc_recurso() { return desc_recurso; }
-    public String getUnidad() { return unidad; }
-    public Double getCuadrilla() { return cuadrilla; }
 
 
     // Métodos de conveniencia

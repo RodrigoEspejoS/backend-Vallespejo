@@ -1,6 +1,8 @@
 package com.example.back_vallespejo.models.dto;
 import java.util.List;
 
+/* Nota: Este DTO sirve para usarlo en PresupuestoUnitarioDTO 
+para mostrar la lista de equipos y herramientas */
 public class EquiposHerramientasDTO {
     private Long id;
     private Double subtotal;

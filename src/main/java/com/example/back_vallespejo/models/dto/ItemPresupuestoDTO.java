@@ -2,7 +2,7 @@ package com.example.back_vallespejo.models.dto;
 
 public class ItemPresupuestoDTO {
     private Long id;
-    private String tipo; // EQUIPO_HERRAMIENTA, MATERIAL, MANO_OBRA
+    private String tipo; // EQUIPO_HERRAMIENTA, MANO_OBRA
     private String codigo;
     private String descripcion;
     private String unidad;

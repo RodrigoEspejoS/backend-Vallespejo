@@ -1,7 +1,7 @@
 package com.example.back_vallespejo.models.dto;
 
 
-/* Nota Rodri: Este DTO es especificamente solo para respuesta en JSON. */
+/* Nota Rodri: Este DTO es especificamente solo para respuesta JSON (get) */
 
 public class ItemMaterialResponseDTO {
     

@@ -25,6 +25,13 @@ public class U_ManodeObra {
     }
         private Double subtotal;
     
+    public Long getId() {
+        return id; }
+    
+    public Long setId() {
+        return id;
+    }
+    
         public Double getSubtotal() {
             if (itemManodeObra == null || itemManodeObra.isEmpty()) {
                 this.subtotal = 0.0;

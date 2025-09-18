@@ -7,12 +7,12 @@ public class ItemCatalogoResponseDTO {
     private String codigo;
     private String descripcion;
     private String unidad;
-    private Double cuadrilla; // puede ser null en materiales
+    private Double cuadrilla;
     private Double cantidad;
     private Double precioUnitario;
     private Double subtotal;
 
-    // Datos del catálogo (para mostrar en GET incluso si cambia luego)
+    // Datos del catálogo para mostrar en GET
     private String catalogoCodigo;
     private String catalogoDescripcion;
     private Double catalogoPrecioUnitario;

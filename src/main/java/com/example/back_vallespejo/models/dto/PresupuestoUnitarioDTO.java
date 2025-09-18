@@ -7,7 +7,8 @@ public class PresupuestoUnitarioDTO {
     private Double u_rendimiento;
     private String t_rendimiento;
     private Double totalPresupuestoUnitario;
-    private ListaMaterialesDTO listaMateriales;
+    
+    private ListaMaterialesDTO listaMateriales; 
     private EquiposHerramientasDTO equiposHerramientas;
     private ManoDeObraDTO manoDeObra;
 

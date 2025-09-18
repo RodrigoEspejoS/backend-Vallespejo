@@ -15,15 +15,18 @@ import org.springframework.transaction.annotation.Transactional;
 @RequestMapping("/api")
 @CrossOrigin
 public class ProyectoController {
+
+    
+    @Autowired
+    private IProyectoService proyectoService;
+
+
     @PostMapping("/proyecto/{id}/agregar-actividad")
     @ResponseStatus(HttpStatus.CREATED)
     public String agregarActividadAProyecto(@PathVariable Long id, @RequestParam String nombreActividad) {
         boolean ok = proyectoService.agregarActividadAProyecto(id, nombreActividad);
         return ok ? "Actividad agregada correctamente" : "No se pudo agregar la actividad";
     }
-
-    @Autowired
-    private IProyectoService proyectoService;
 
     @PostMapping("/proyecto/crear")
     @ResponseStatus(HttpStatus.CREATED)

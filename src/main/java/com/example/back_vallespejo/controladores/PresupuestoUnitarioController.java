@@ -1,12 +1,17 @@
 package com.example.back_vallespejo.controladores;
 import com.example.back_vallespejo.models.entities.U_Item_EquipoyHerramientas;
 import com.example.back_vallespejo.models.dto.ItemCatalogoResponseDTO;
+import com.example.back_vallespejo.models.dto.ItemPresupuestoDTO;
+import com.example.back_vallespejo.models.dto.ObtenerTotalesPresupuestoUnitarioDTO;
+import com.example.back_vallespejo.models.dto.PresupuestoUnitarioDTO;
 import com.example.back_vallespejo.models.dto.AddItemMaterialRequest;
 import com.example.back_vallespejo.models.dto.AddItemCatalogRequest;
 import com.example.back_vallespejo.models.entities.Material;
 import com.example.back_vallespejo.models.entities.TD_Presupuestos;
+import com.example.back_vallespejo.models.dao.IItemMaterialDAO;
 import com.example.back_vallespejo.models.dao.IMaterialDAO;
 import com.example.back_vallespejo.models.dao.ITDPresupuestosDAO;
+import com.example.back_vallespejo.models.dao.IUItemEquipoyHerramientasDAO;
 import com.example.back_vallespejo.models.entities.ItemMaterial;
 import com.example.back_vallespejo.models.entities.U_Item_ManodeObra;
 import com.example.back_vallespejo.models.dao.IUItemManodeObraDAO;
@@ -21,15 +26,63 @@ import com.example.back_vallespejo.service.IPresupuestoUnitarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
 @CrossOrigin
 public class PresupuestoUnitarioController {
+    @Autowired
+    private IUItemEquipoyHerramientasDAO itemEquiposDAO;
+    @Autowired
+    private IItemMaterialDAO itemMaterialDAO;
+    @Autowired
+    private IPresupuestoUnitarioService presupuestoUnitarioService;
+    @Autowired
+    private IUItemManodeObraDAO manoObraDAO;
+    @Autowired
+    private ITDPresupuestosDAO tdPresupuestosDAO;
+    @Autowired
+    private IMaterialDAO materialDAO;
+
+    @PostMapping("/presupuesto-unitario/{id}/manodeobra")
+    @ResponseStatus(HttpStatus.CREATED)
+    public String agregarItemManodeObra(@PathVariable Long id, @RequestBody AddItemCatalogRequest dto) {
+
+        Presupuesto_unitario presupuesto = presupuestoUnitarioService.findById(id);
+
+        // control de errores para evitar nulos
+        if (presupuesto == null) throw new RuntimeException("Presupuesto unitario no encontrado");
+        if (dto.getTdPresupuestoId()==null) throw new RuntimeException("tdPresupuestoId requerido");
+
+        //td_presupuestos es la base de datos para crear equipos y mano de obra
+        TD_Presupuestos cat = tdPresupuestosDAO.findById(dto.getTdPresupuestoId()) // hace un findById del id que se acaba de colocar en el post de json
+                .orElseThrow(() -> new RuntimeException("TD_Presupuestos no encontrado"));//control de errores
+
+        U_ManodeObra lista = presupuesto.getUManodeObra(); //UManodeObra es la lista de mano de obra que esta dentro de presupuesto unitario
+        if (lista == null) throw new RuntimeException("Lista de mano de obra no inicializada en el presupuesto");// control de errores, pero al crear una actividad automaticamente se crean las 3 listas correspondientes
+
+        U_Item_ManodeObra item = new U_Item_ManodeObra(); // crea un nuevo item de mano de obra
+        item.setListaManodeObra(lista); // lo asigna a la lista de mano de obra del presupuesto que ya se ingresó su id
+        item.setCodigo(cat.getCodigo()); // los cat.get... lo que hace es copiar datos del td_presupuesto que ya asignaste su id
+        item.setDesc_recurso(cat.getDesc_recurso());
+        item.setUnidad(cat.getUnidad());
+        item.setCuadrilla(cat.getCuadrilla());
+        item.setPrecio_unitario(dto.getPrecioOverride()!=null? dto.getPrecioOverride(): cat.getPrecioUnitario()); // condicional de operador ternario para verificar si colocaste un precio nuevo en el post, sino toma el valor de la tabla de datos
+        item.setCantidad(dto.getCantidad()!=null? dto.getCantidad():1.0);
+        item.setTdPresupuesto(cat);
+        if (lista.getItemManodeObra() == null) lista.setItemManodeObra(new java.util.ArrayList<>());
+        lista.getItemManodeObra().add(item);
+    presupuestoUnitarioService.registrar(presupuesto);
+    return "Agregado correctamente";
+    }
+
     @PostMapping("/presupuesto-unitario/{id}/equipos")
     @ResponseStatus(HttpStatus.CREATED)
-    public java.util.Map<String,Object> agregarItemEquipo(@PathVariable Long id, @RequestBody AddItemCatalogRequest dto) {
+    public String agregarItemEquipo(@PathVariable Long id, @RequestBody AddItemCatalogRequest dto) {
         Presupuesto_unitario presupuesto = presupuestoUnitarioService.findById(id);
         if (presupuesto == null) throw new RuntimeException("Presupuesto unitario no encontrado");
         U_EquipoyHerramientas lista = presupuesto.getUEquipoyHerramientas();
@@ -39,7 +92,6 @@ public class PresupuestoUnitarioController {
                 .orElseThrow(() -> new RuntimeException("TD_Presupuestos no encontrado"));
         U_Item_EquipoyHerramientas item = new U_Item_EquipoyHerramientas();
         item.setUEquipoyHerramientas(lista);
-        // Copia snapshot desde catálogo
         item.setCodigo(cat.getCodigo());
         item.setDesc_recurso(cat.getDesc_recurso());
         item.setUnidad(cat.getUnidad());
@@ -50,26 +102,22 @@ public class PresupuestoUnitarioController {
         if (lista.getUItemEquipoyHerramientas() == null) lista.setUItemEquipoyHerramientas(new java.util.ArrayList<>());
         lista.getUItemEquipoyHerramientas().add(item);
     presupuestoUnitarioService.registrar(presupuesto);
-    java.util.Map<String,Object> resp = new java.util.HashMap<>();
-    resp.put("status","OK");
-    resp.put("presupuestoId", presupuesto.getId());
-    resp.put("itemId", item.getId());
-    resp.put("tipo","EQUIPO");
-    resp.put("cantidad", item.getCantidad());
-    resp.put("precioUnitario", item.getPrecio_unitario());
-    resp.put("subtotal", item.getSubTotal_precio_unitario());
-    return resp;
+    return "Agregado correctamente";
     }
 
     @PostMapping("/presupuesto-unitario/{id}/materiales")
     @ResponseStatus(HttpStatus.CREATED)
-    public java.util.Map<String,Object> agregarItemMaterial(@PathVariable Long id, @RequestBody AddItemMaterialRequest req) {
+    public String agregarItemMaterial(@PathVariable Long id, @RequestBody AddItemMaterialRequest req) {
         Presupuesto_unitario presupuesto = presupuestoUnitarioService.findById(id);
         if (presupuesto == null) throw new RuntimeException("Presupuesto unitario no encontrado");
         if (req.getMaterialId()==null) throw new RuntimeException("materialId requerido");
         Material material = materialDAO.findById(req.getMaterialId())
                 .orElseThrow(() -> new RuntimeException("Material no encontrado"));
         ListaMateriales lista = presupuesto.getListaMateriales();
+        // Validar si ya existe el material en la lista
+        if (lista.getItems() != null && lista.getItems().stream().anyMatch(i -> i.getMaterial().getId().equals(req.getMaterialId()))) {
+            throw new RuntimeException("El material ya existe en la lista");
+        }
         ItemMaterial item = new ItemMaterial();
         item.setListaMateriales(lista);
         item.setMaterial(material);
@@ -79,175 +127,91 @@ public class PresupuestoUnitarioController {
         if (lista.getItems() == null) lista.setItems(new java.util.ArrayList<>());
         lista.getItems().add(item);
     presupuestoUnitarioService.registrar(presupuesto);
-    java.util.Map<String,Object> resp = new java.util.HashMap<>();
-    resp.put("status","OK");
-    resp.put("presupuestoId", presupuesto.getId());
-    resp.put("itemId", item.getId());
-    resp.put("tipo","MATERIAL");
-    resp.put("cantidad", item.getCantidad());
-    resp.put("precioUnitario", item.getPrecioUnitarioRecurso());
-    resp.put("subtotal", item.getSubtotal_PrecioUnitario());
-    return resp;
+    return "Agregado correctamente";
     }
 
-    @PostMapping("/presupuesto-unitario/{id}/manodeobra")
-    @ResponseStatus(HttpStatus.CREATED)
-    public java.util.Map<String,Object> agregarItemManodeObra(@PathVariable Long id, @RequestBody AddItemCatalogRequest dto) {
-        Presupuesto_unitario presupuesto = presupuestoUnitarioService.findById(id);
-        if (presupuesto == null) throw new RuntimeException("Presupuesto unitario no encontrado");
-        if (dto.getTdPresupuestoId()==null) throw new RuntimeException("tdPresupuestoId requerido");
-        TD_Presupuestos cat = tdPresupuestosDAO.findById(dto.getTdPresupuestoId())
-                .orElseThrow(() -> new RuntimeException("TD_Presupuestos no encontrado"));
-        U_ManodeObra lista = presupuesto.getUManodeObra();
-        if (lista == null) throw new RuntimeException("Lista de mano de obra no inicializada en el presupuesto");
-        U_Item_ManodeObra item = new U_Item_ManodeObra();
-        item.setListaManodeObra(lista);
-        item.setCodigo(cat.getCodigo());
-        item.setDesc_recurso(cat.getDesc_recurso());
-        item.setUnidad(cat.getUnidad());
-        item.setCuadrilla(cat.getCuadrilla());
-        item.setPrecio_unitario(dto.getPrecioOverride()!=null? dto.getPrecioOverride(): cat.getPrecioUnitario());
-        item.setCantidad(dto.getCantidad()!=null? dto.getCantidad():1.0);
-        item.setTdPresupuesto(cat);
-        if (lista.getItemManodeObra() == null) lista.setItemManodeObra(new java.util.ArrayList<>());
-        lista.getItemManodeObra().add(item);
-    presupuestoUnitarioService.registrar(presupuesto);
-    java.util.Map<String,Object> resp = new java.util.HashMap<>();
-    resp.put("status","OK");
-    resp.put("presupuestoId", presupuesto.getId());
-    resp.put("itemId", item.getId());
-    resp.put("tipo","MANO_OBRA");
-    resp.put("cantidad", item.getCantidad());
-    resp.put("precioUnitario", item.getPrecio_unitario());
-    resp.put("subtotal", item.getSubtotal());
-    return resp;
+        @PutMapping("/presupuesto-unitario/equipos/{itemId}/cantidad")
+    public Map<String,Object> actualizarCantidadEquipo(@PathVariable Long itemId, @RequestBody Double nuevaCantidad) {
+        U_Item_EquipoyHerramientas item = itemEquiposDAO.findById(itemId)
+            .orElseThrow(() -> new RuntimeException("ItemEquipo no encontrado"));
+        item.setCantidad(nuevaCantidad);
+        itemEquiposDAO.save(item);
+        Map<String,Object> resp = new HashMap<>();
+        resp.put("status", "OK");
+        resp.put("itemId", item.getId());
+        resp.put("nuevaCantidad", item.getCantidad());
+        return resp;
     }
 
-    @Autowired
-    private IPresupuestoUnitarioService presupuestoUnitarioService;
-    @Autowired
-    private IUItemManodeObraDAO manoObraDAO;
-    @Autowired
-    private ITDPresupuestosDAO tdPresupuestosDAO;
-    @Autowired
-    private IMaterialDAO materialDAO;
+    @PutMapping("/presupuesto-unitario/mano-obra/{itemId}/cantidad")
+    public Map<String,Object> actualizarCantidadManoObra(@PathVariable Long itemId, @RequestBody Double nuevaCantidad) {
+        U_Item_ManodeObra item = manoObraDAO.findById(itemId)
+            .orElseThrow(() -> new RuntimeException("ItemManodeObra no encontrado"));
+        item.setCantidad(nuevaCantidad);
+        manoObraDAO.save(item);
+        Map<String,Object> resp = new HashMap<>();
+        resp.put("status", "OK");
+        resp.put("itemId", item.getId());
+        resp.put("nuevaCantidad", item.getCantidad());
+        return resp;
+    }
+
+    @PutMapping("/presupuesto-unitario/materiales/{itemId}/cantidad")
+    public Map<String,Object> actualizarCantidadMaterial(@PathVariable Long itemId, @RequestBody Integer nuevaCantidad) {
+        ItemMaterial item = itemMaterialDAO.findById(itemId)
+            .orElseThrow(() -> new RuntimeException("ItemMaterial no encontrado"));
+        item.setCantidad(nuevaCantidad);
+        itemMaterialDAO.save(item);
+        Map<String,Object> resp = new HashMap<>();
+        resp.put("status", "OK");
+        resp.put("itemId", item.getId());
+        resp.put("nuevaCantidad", item.getCantidad());
+        return resp;
+    }
+
+
 
     @GetMapping("/presupuesto-unitario/{id}")
-    public java.util.Map<String,Object> obtenerPorId(@PathVariable Long id) {
-        Presupuesto_unitario presupuesto = presupuestoUnitarioService.findById(id);
-        if (presupuesto == null) throw new RuntimeException("Presupuesto unitario no encontrado");
-        java.util.Map<String,Object> respuesta = new java.util.HashMap<>();
-        respuesta.put("id", presupuesto.getId());
-    respuesta.put("descripcion", presupuesto.getDescripcion());
-        // Materiales
-        java.util.List<ItemCatalogoResponseDTO> materiales = new java.util.ArrayList<>();
-        if (presupuesto.getListaMateriales()!=null && presupuesto.getListaMateriales().getItems()!=null){
-            for (ItemMaterial im: presupuesto.getListaMateriales().getItems()){
-                ItemCatalogoResponseDTO r = new ItemCatalogoResponseDTO();
-                r.setId(im.getId());
-                r.setTipo("MATERIAL");
-                if (im.getMaterial()!=null){
-                    r.setCatalogoId(im.getMaterial().getId());
-                    r.setCatalogoCodigo(im.getMaterial().getSerie());
-                    r.setCatalogoDescripcion(im.getMaterial().getNombre());
-                    r.setCatalogoPrecioUnitario(im.getMaterial().getCostoUnitario());
-                }
-                r.setCodigo(im.getCodigo());
-                r.setDescripcion(im.getDesc_recurso());
-                r.setUnidad(im.getUnidad());
-                r.setCantidad(im.getCantidad()!=null? im.getCantidad().doubleValue(): null);
-                r.setPrecioUnitario(im.getPrecioUnitarioRecurso());
-                r.setSubtotal(im.getSubtotal_PrecioUnitario());
-                materiales.add(r);
-            }
-        }
-        respuesta.put("materiales", materiales);
-        // Equipos
-        java.util.List<ItemCatalogoResponseDTO> equipos = new java.util.ArrayList<>();
-        if (presupuesto.getUEquipoyHerramientas()!=null && presupuesto.getUEquipoyHerramientas().getUItemEquipoyHerramientas()!=null){
-            for (U_Item_EquipoyHerramientas ie: presupuesto.getUEquipoyHerramientas().getUItemEquipoyHerramientas()){
-                ItemCatalogoResponseDTO r = new ItemCatalogoResponseDTO();
-                r.setId(ie.getId());
-                r.setTipo("EQUIPO");
-                if (ie.getTdPresupuesto()!=null){
-                    r.setCatalogoId(ie.getTdPresupuesto().getId());
-                    r.setCatalogoCodigo(ie.getTdPresupuesto().getCodigo());
-                    r.setCatalogoDescripcion(ie.getTdPresupuesto().getDesc_recurso());
-                    r.setCatalogoPrecioUnitario(ie.getTdPresupuesto().getPrecioUnitario());
-                }
-                r.setCodigo(ie.getCodigo());
-                r.setDescripcion(ie.getDesc_recurso());
-                r.setUnidad(ie.getUnidad());
-                r.setCuadrilla(ie.getCuadrilla());
-                r.setCantidad(ie.getCantidad());
-                r.setPrecioUnitario(ie.getPrecio_unitario());
-                r.setSubtotal(ie.getSubTotal_precio_unitario());
-                equipos.add(r);
-            }
-        }
-        respuesta.put("equipos", equipos);
-        // Mano de obra
-        java.util.List<ItemCatalogoResponseDTO> manoObra = new java.util.ArrayList<>();
-        if (presupuesto.getUManodeObra()!=null && presupuesto.getUManodeObra().getItemManodeObra()!=null){
-            for (U_Item_ManodeObra mo: presupuesto.getUManodeObra().getItemManodeObra()){
-                ItemCatalogoResponseDTO r = new ItemCatalogoResponseDTO();
-                r.setId(mo.getId());
-                r.setTipo("MANO_OBRA");
-                if (mo.getTdPresupuesto()!=null){
-                    r.setCatalogoId(mo.getTdPresupuesto().getId());
-                    r.setCatalogoCodigo(mo.getTdPresupuesto().getCodigo());
-                    r.setCatalogoDescripcion(mo.getTdPresupuesto().getDesc_recurso());
-                    r.setCatalogoPrecioUnitario(mo.getTdPresupuesto().getPrecioUnitario());
-                }
-                r.setCodigo(mo.getCodigo());
-                r.setDescripcion(mo.getDesc_recurso());
-                r.setUnidad(mo.getUnidad());
-                r.setCuadrilla(mo.getCuadrilla());
-                r.setCantidad(mo.getCantidad());
-                r.setPrecioUnitario(mo.getPrecio_unitario());
-                r.setSubtotal(mo.getSubtotal());
-                manoObra.add(r);
-            }
-        }
-        respuesta.put("manoObra", manoObra);
-        respuesta.put("total", presupuesto.getTotal_presupuesto_unitario());
-        return respuesta;
+    public com.example.back_vallespejo.models.dto.PresupuestoUnitarioDTO obtenerPorId(@PathVariable Long id) {
+        PresupuestoUnitarioDTO dto = presupuestoUnitarioService.obtenerDTO(id);
+        if (dto == null) throw new RuntimeException("Presupuesto unitario no encontrado");
+        return dto;
     }
 
-    // Endpoint alternativo que retorna solo totales (útil si no se requiere detalle)
+    // Endpoint que sirve para obtener datos totales de cada lista 
     @GetMapping("/presupuesto-unitario/{id}/totales")
-    public java.util.Map<String, Double> obtenerTotales(@PathVariable Long id) {
+    public ObtenerTotalesPresupuestoUnitarioDTO obtenerTotales(@PathVariable Long id) {
         Presupuesto_unitario entity = presupuestoUnitarioService.findById(id);
         if (entity == null) throw new RuntimeException("Presupuesto unitario no encontrado");
-        double total = entity.getTotal_presupuesto_unitario();
-        double subtotalEquipos = (entity.getUEquipoyHerramientas()!=null)? entity.getUEquipoyHerramientas().getSubtotal():0.0;
-        double subtotalMateriales = (entity.getListaMateriales()!=null)? entity.getListaMateriales().getTotalEstimado():0.0;
-        double subtotalManoObra = (entity.getUManodeObra()!=null)? entity.getUManodeObra().getSubtotal():0.0;
-        java.util.Map<String, Double> response = new java.util.HashMap<>();
-        response.put("subtotalEquiposHerramientas", subtotalEquipos);
-        response.put("subtotalMateriales", subtotalMateriales);
-        response.put("subtotalManoObra", subtotalManoObra);
-        response.put("totalPresupuestoUnitario", total);
-        return response;
+        Double subTotalMateriales = (entity.getListaMateriales() != null) ? entity.getListaMateriales().getTotalEstimado() : 0.0;
+        Double subTotalEquipos = (entity.getUEquipoyHerramientas() != null) ? entity.getUEquipoyHerramientas().getSubtotal() : 0.0;
+        Double subTotalManoObra = (entity.getUManodeObra() != null) ? entity.getUManodeObra().getSubtotal() : 0.0;
+        Double total = subTotalMateriales + subTotalEquipos + subTotalManoObra;
+        ObtenerTotalesPresupuestoUnitarioDTO dto = new ObtenerTotalesPresupuestoUnitarioDTO();
+        dto.setSubTotalMateriales(subTotalMateriales);
+        dto.setSubTotalEquipos(subTotalEquipos);
+        dto.setSubTotalManoObra(subTotalManoObra);
+        dto.setTotal(total);
+        return dto;
     }
 
     @GetMapping("/presupuesto-unitario/{id}/items")
-    public java.util.List<com.example.back_vallespejo.models.dto.ItemPresupuestoDTO> obtenerItemsPresupuesto(@PathVariable Long id) {
+    public List<ItemPresupuestoDTO> obtenerItemsPresupuesto(@PathVariable Long id) {
         return presupuestoUnitarioService.obtenerItems(id);
     }
 
     @GetMapping("/presupuesto-unitario/{id}/items/equipos")
-    public java.util.List<com.example.back_vallespejo.models.dto.ItemPresupuestoDTO> obtenerItemsEquipos(@PathVariable Long id) {
+    public List<ItemPresupuestoDTO> obtenerItemsEquipos(@PathVariable Long id) {
         return presupuestoUnitarioService.obtenerItemsEquipos(id);
     }
 
     @GetMapping("/presupuesto-unitario/{id}/items/materiales")
-    public java.util.List<com.example.back_vallespejo.models.dto.ItemPresupuestoDTO> obtenerItemsMateriales(@PathVariable Long id) {
+    public List<ItemPresupuestoDTO> obtenerItemsMateriales(@PathVariable Long id) {
         return presupuestoUnitarioService.obtenerItemsMateriales(id);
     }
 
     @GetMapping("/presupuesto-unitario/{id}/items/mano-obra")
-    public java.util.List<com.example.back_vallespejo.models.dto.ItemPresupuestoDTO> obtenerItemsManoObra(@PathVariable Long id) {
+    public List<ItemPresupuestoDTO> obtenerItemsManoObra(@PathVariable Long id) {
         return presupuestoUnitarioService.obtenerItemsManoObra(id);
     }
 }
