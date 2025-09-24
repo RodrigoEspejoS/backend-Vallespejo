@@ -66,4 +66,5 @@ public class Actividades {
     public void setPresupuestoUnitario(Presupuesto_unitario presupuestoUnitario) {
         this.presupuestoUnitario = presupuestoUnitario;
     }
+
 }

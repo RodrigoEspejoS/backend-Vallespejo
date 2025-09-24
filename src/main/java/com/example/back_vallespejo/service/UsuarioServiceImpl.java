@@ -38,7 +38,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
         usuario.setApellido(usuarioDTO.getApellido());
         usuario.setEmail(usuarioDTO.getEmail());
         usuario.setRol(rol);
-        usuario.setEstado(usuarioDTO.getEstado());
+        usuario.setEstado(1);
 
         // Encriptar la contraseña
         String hashedPassword = passwordEncoder.encode(usuarioDTO.getPassword());
@@ -59,6 +59,9 @@ public class UsuarioServiceImpl implements IUsuarioService{
     public Usuario findById(Long id) {
         return usuarioDAO.findById(id).orElse(null);
     }
+
+    @Override
+    public Usuario findByEmail(String email){ return usuarioDAO.findByEmail(email).orElse(null);}
 
     @Override
     public void delete(Usuario usuario) {

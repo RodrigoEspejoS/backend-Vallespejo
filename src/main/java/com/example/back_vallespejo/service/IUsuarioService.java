@@ -9,5 +9,6 @@ public interface IUsuarioService {
     public List<Usuario> getAll();
     public Usuario registrarUsuarioDTO(UsuarioDTO usuarioDTO);
     public Usuario findById(Long id);
+    public Usuario findByEmail(String email);
     public void delete(Usuario usuario);
 }

@@ -27,8 +27,6 @@ public class UsuarioDTO {
     @NotBlank(message = "El rol es obligatorio")
     private String nombreRol; // Se pedira solo el nombre de rol y debe existir previamente
 
-    private Integer estado = 1; // El 1 se usa por defecto para validar en la base de datos
-
     public UsuarioDTO() {
     }
 
@@ -90,12 +88,5 @@ public class UsuarioDTO {
         this.nombreRol = nombreRol;
     }
 
-    public Integer getEstado() {
-        return estado;
-    }
-
-    public void setEstado(Integer estado) {
-        this.estado = estado;
-    }
 
 }
