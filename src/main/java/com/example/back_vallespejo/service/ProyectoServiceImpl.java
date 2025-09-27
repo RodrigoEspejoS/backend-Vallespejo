@@ -27,6 +27,7 @@ import java.util.List;
 
 @Service
 public class ProyectoServiceImpl implements IProyectoService {
+
     @Autowired
     private IPresupuestoGeneralDAO presupuestoGeneralDAO;
     @Autowired
@@ -39,6 +40,14 @@ public class ProyectoServiceImpl implements IProyectoService {
     private IListaMaterialesDAO listaMaterialesDAO;
     @Autowired
     private IUManodeObraDAO uManodeObraDAO;
+
+    @Autowired
+    private IProyectoDAO proyectoDAO;
+
+    @Autowired
+    private IUsuarioService usuarioService;
+
+
     @Override
     public boolean agregarActividadAProyecto(Long proyectoId, String nombreActividad) {
         Proyecto proyecto = proyectoDAO.findById(proyectoId).orElse(null);
@@ -50,12 +59,13 @@ public class ProyectoServiceImpl implements IProyectoService {
         // Crear actividad
     Actividades actividad = new Actividades();
         actividad.setNombre(nombreActividad);
-        actividad.setDescripcion("Actividad " + nombreActividad + " para proyecto " + proyecto.getNombre());
+        actividad.setDescripcion("Actividad " + nombreActividad + " para " + proyecto.getNombre());
         actividad.setPresupuestoGeneral(presupuestoGeneral);
+        actividad.setEstado("En curso");
 
         // Crear presupuesto unitario y sus 3 listas
     Presupuesto_unitario presupuestoUnitario = new Presupuesto_unitario();
-        String descPU = ("Presupuesto unitario para actividad " + nombreActividad);
+        String descPU = (nombreActividad);
         if (descPU.length() > 50) {
             descPU = descPU.substring(0,50);
         }
@@ -93,12 +103,6 @@ public class ProyectoServiceImpl implements IProyectoService {
 
         return true;
     }
-
-    @Autowired
-    private IProyectoDAO proyectoDAO;
-
-    @Autowired
-    private IUsuarioService usuarioService;
 
     @Override
     public Proyecto registrarProyecto(Proyecto proyecto) {
@@ -173,6 +177,61 @@ public class ProyectoServiceImpl implements IProyectoService {
     @Override
     public List<Proyecto> findByNombreContainingIgnoreCase(String nombre) {
         return proyectoDAO.findByNombreContainingIgnoreCase(nombre);
+    }
+
+    @Override
+    public Proyecto updateProyecto(Long id, ProyectoDTO proyectoDTO) {
+        // Buscar el proyecto existente
+        Proyecto proyectoExistente = proyectoDAO.findById(id).orElse(null);
+        if (proyectoExistente == null) {
+            return null;
+        }
+
+        // Actualizar solo los campos que no sean nulos o vacíos
+        if (proyectoDTO.getNombre() != null && !proyectoDTO.getNombre().trim().isEmpty()) {
+            proyectoExistente.setNombre(proyectoDTO.getNombre());
+        }
+        
+        if (proyectoDTO.getDescripcion() != null) {
+            proyectoExistente.setDescripcion(proyectoDTO.getDescripcion());
+        }
+        
+        if (proyectoDTO.getUsuarioResponsableId() != null) {
+            Usuario usuario = usuarioService.findById(proyectoDTO.getUsuarioResponsableId());
+            if (usuario == null) {
+                throw new RuntimeException("Usuario no encontrado con ID: " + proyectoDTO.getUsuarioResponsableId());
+            }
+            proyectoExistente.setUsuarioResponsable(usuario);
+        }
+        
+        if (proyectoDTO.getFechaInicio() != null) {
+            proyectoExistente.setFechaInicio(proyectoDTO.getFechaInicio());
+        }
+        
+        if (proyectoDTO.getFechaFinEstimada() != null) {
+            proyectoExistente.setFechaFinEstimada(proyectoDTO.getFechaFinEstimada());
+        }
+        
+        if (proyectoDTO.getPresupuesto() != null) {
+            proyectoExistente.setPresupuesto(proyectoDTO.getPresupuesto());
+        }
+        
+        if (proyectoDTO.getUbicacion() != null) {
+            proyectoExistente.setUbicacion(proyectoDTO.getUbicacion());
+        }
+        
+        if (proyectoDTO.getEstado() != null && !proyectoDTO.getEstado().isBlank()) {
+            try {
+                proyectoExistente.setEstado(Proyecto.EstadoProyecto.valueOf(proyectoDTO.getEstado().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Estado invalido. Valores permitidos: PLANIFICACION, APROBADO, EN_EJECUCION, PAUSADO, COMPLETADO, CANCELADO, RECHAZADO");
+            }
+        }
+
+        // Actualizar fecha de modificación
+        proyectoExistente.actualizarFechaModificacion();
+        
+        return proyectoDAO.save(proyectoExistente);
     }
 
     @Override

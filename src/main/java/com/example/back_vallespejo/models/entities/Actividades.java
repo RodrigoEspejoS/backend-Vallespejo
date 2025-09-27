@@ -27,6 +27,8 @@ public class Actividades {
     @JoinColumn(name = "presupuesto_unitario_id", referencedColumnName = "id", nullable = false)
     private Presupuesto_unitario presupuestoUnitario;
 
+    private String estado;
+
     public Long getId() {
         return id;
     }
@@ -61,6 +63,14 @@ public class Actividades {
 
     public Presupuesto_unitario getPresupuestoUnitario() {
         return presupuestoUnitario;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
     public void setPresupuestoUnitario(Presupuesto_unitario presupuestoUnitario) {

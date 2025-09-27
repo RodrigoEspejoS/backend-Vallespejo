@@ -5,7 +5,6 @@ import com.example.back_vallespejo.models.dto.PresupuestoUnitarioDTO;
 import com.example.back_vallespejo.models.dto.EquiposHerramientasDTO;
 import com.example.back_vallespejo.models.dto.ItemEquiposHerramientasDTO;
 import com.example.back_vallespejo.models.dto.ItemManoDeObraDTO;
-import com.example.back_vallespejo.models.dto.ItemMaterialDTO;
 import com.example.back_vallespejo.models.dto.ItemMaterialResponseDTO;
 import com.example.back_vallespejo.models.dto.ItemPresupuestoDTO;
 import com.example.back_vallespejo.models.dto.ListaMaterialesDTO;
@@ -13,15 +12,13 @@ import com.example.back_vallespejo.models.dto.ManoDeObraDTO;
 import com.example.back_vallespejo.models.entities.U_Item_EquipoyHerramientas;
 import com.example.back_vallespejo.models.entities.ItemMaterial;
 import com.example.back_vallespejo.models.entities.U_Item_ManodeObra;
-import com.example.back_vallespejo.models.entities.ListaMateriales;
-import com.example.back_vallespejo.models.entities.U_EquipoyHerramientas;
-import com.example.back_vallespejo.models.entities.U_ManodeObra;
 import com.example.back_vallespejo.models.entities.Presupuesto_unitario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PresupuestoUnitarioServiceImpl implements IPresupuestoUnitarioService {
@@ -279,5 +276,34 @@ public class PresupuestoUnitarioServiceImpl implements IPresupuestoUnitarioServi
             }
         }
         return lista;
+    }
+
+    @Override
+    public Presupuesto_unitario updatePU(Long id, PresupuestoUnitarioDTO presupuestoUnitarioDTO) {
+        //buscamos el pu existente
+        Optional<Presupuesto_unitario> puExistente = dao.findById(id);
+        if (puExistente.isEmpty()) {
+            return null;
+        }
+
+        //Actualizar solo datos que no sean nulos
+        if (presupuestoUnitarioDTO.getDescripcion() != null && !presupuestoUnitarioDTO.getDescripcion().trim().isEmpty()) {
+            puExistente.get().setDescripcion(presupuestoUnitarioDTO.getDescripcion());
+        }
+
+        if(presupuestoUnitarioDTO.getUnidad() != null && !presupuestoUnitarioDTO.getUnidad().trim().isEmpty()){
+            puExistente.get().setUnidad(presupuestoUnitarioDTO.getUnidad());
+        }
+
+        if(presupuestoUnitarioDTO.getT_rendimiento() != null && !presupuestoUnitarioDTO.getT_rendimiento().trim().isEmpty()){
+            puExistente.get().setT_rendimiento(presupuestoUnitarioDTO.getT_rendimiento());
+        }
+
+        if(presupuestoUnitarioDTO.getU_rendimiento() != null && !presupuestoUnitarioDTO.getU_rendimiento().toString().trim().isEmpty()){
+            puExistente.get().setU_rendimiento(presupuestoUnitarioDTO.getU_rendimiento());
+        }
+
+        return dao.save(puExistente.get());
+
     }
 }

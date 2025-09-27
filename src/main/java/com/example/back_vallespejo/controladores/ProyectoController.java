@@ -6,8 +6,8 @@ import com.example.back_vallespejo.models.entities.Proyecto;
 import com.example.back_vallespejo.service.IProyectoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,10 +34,19 @@ public class ProyectoController {
         return proyectoService.crearProyectoDesdeDTO(proyectoDTO);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleIllegalArgument(IllegalArgumentException ex){
-        return ex.getMessage();
+    @PutMapping("/proyecto/{id}")
+    public ResponseEntity<Proyecto> editarProyecto(@PathVariable Long id, @Valid @RequestBody ProyectoDTO proyectoDTO){
+        try {
+            Proyecto proyectoActualizado = proyectoService.updateProyecto(id, proyectoDTO);
+            
+            if(proyectoActualizado == null){
+                return ResponseEntity.notFound().build();
+            }
+            
+            return ResponseEntity.ok(proyectoActualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/proyecto/{id}")

@@ -23,8 +23,10 @@ import com.example.back_vallespejo.models.entities.U_ManodeObra;
 import com.example.back_vallespejo.service.IPresupuestoUnitarioService;
 // import com.example.back_vallespejo.service.PresupuestoUnitarioDTOAssembler; // Reemplazado por método de servicio
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -172,10 +174,25 @@ public class PresupuestoUnitarioController {
 
 
     @GetMapping("/presupuesto-unitario/{id}")
-    public com.example.back_vallespejo.models.dto.PresupuestoUnitarioDTO obtenerPorId(@PathVariable Long id) {
+    public PresupuestoUnitarioDTO obtenerPorId(@PathVariable Long id) {
         PresupuestoUnitarioDTO dto = presupuestoUnitarioService.obtenerDTO(id);
         if (dto == null) throw new RuntimeException("Presupuesto unitario no encontrado");
         return dto;
+    }
+
+    @PutMapping("/presupuesto-unitario/{id}")
+    public ResponseEntity<Presupuesto_unitario> editarPU(@PathVariable Long id,@Valid @RequestBody PresupuestoUnitarioDTO presupuestoUnitarioDTO){
+        try {
+            Presupuesto_unitario puActualizado = presupuestoUnitarioService.updatePU(id, presupuestoUnitarioDTO);
+
+            if (puActualizado == null){
+                return ResponseEntity.notFound().build();
+            }
+
+            return  ResponseEntity.ok(puActualizado);
+        } catch (RuntimeException e){
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     // Endpoint que sirve para obtener datos totales de cada lista 

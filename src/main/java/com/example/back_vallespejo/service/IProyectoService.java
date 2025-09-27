@@ -13,6 +13,7 @@ public interface IProyectoService {
     public Proyecto registrarProyecto(Proyecto proyecto);
     public Proyecto crearProyectoDesdeDTO(ProyectoDTO proyectoDTO);
     public Proyecto findById(Long id);
+    public Proyecto updateProyecto(Long id, ProyectoDTO proyectoDTO);
     public void delete(Proyecto proyecto);
     public List<Proyecto> findByUsuarioResponsable(Usuario usuarioResponsable);
     public List<Proyecto> findByEstado(Proyecto.EstadoProyecto estado);

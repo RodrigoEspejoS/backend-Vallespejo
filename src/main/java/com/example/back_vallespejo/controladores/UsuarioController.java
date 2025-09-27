@@ -2,11 +2,11 @@ package com.example.back_vallespejo.controladores;
 
 import com.example.back_vallespejo.models.entities.Usuario;
 import com.example.back_vallespejo.models.dto.UsuarioDTO;
+import com.example.back_vallespejo.models.dto.CambiarPasswordDTO;
 import com.example.back_vallespejo.service.IUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,6 +43,28 @@ public class UsuarioController {
     public Usuario getUsuarioByEmail(@PathVariable String email){
 
         return usuarioService.findByEmail(email);
+    }
+
+    @PutMapping("/usuario/{id}")
+    public ResponseEntity<Usuario> editarUsuario(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO){
+        Usuario usuarioActualizado = usuarioService.updateUsuario(id, usuarioDTO);
+        
+        if(usuarioActualizado == null){
+            return ResponseEntity.notFound().build();
+        }
+        
+        return ResponseEntity.ok(usuarioActualizado);
+    }
+
+    @PutMapping("/usuario/{id}/password")
+    public ResponseEntity<String> cambiarPassword(@PathVariable Long id, @RequestBody CambiarPasswordDTO cambiarPasswordDTO){
+        boolean cambioExitoso = usuarioService.cambiarPassword(id, cambiarPasswordDTO);
+        
+        if(!cambioExitoso){
+            return ResponseEntity.badRequest().body("No se pudo cambiar la contraseña. Verifique que el usuario exista y la contraseña actual sea correcta.");
+        }
+        
+        return ResponseEntity.ok("Contraseña cambiada exitosamente");
     }
 
     @DeleteMapping("/usuario/{id}")
