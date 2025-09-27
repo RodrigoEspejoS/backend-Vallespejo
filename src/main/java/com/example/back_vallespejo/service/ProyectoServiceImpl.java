@@ -104,10 +104,6 @@ public class ProyectoServiceImpl implements IProyectoService {
         return true;
     }
 
-    @Override
-    public Proyecto registrarProyecto(Proyecto proyecto) {
-        return proyectoDAO.save(proyecto);
-    }
 
     @Override
     public Proyecto crearProyectoDesdeDTO(ProyectoDTO proyectoDTO) {
@@ -164,9 +160,48 @@ public class ProyectoServiceImpl implements IProyectoService {
         proyectoDAO.delete(proyecto);
     }
 
+
     @Override
-    public List<Proyecto> findByUsuarioResponsable(Usuario usuarioResponsable) {
-        return proyectoDAO.findByUsuarioResponsable(usuarioResponsable);
+    public List<ProyectoCompletoDTO> findByUsuarioResponsableId(Long usuarioId) {
+        Usuario usuario = usuarioService.findById(usuarioId);
+        if (usuario == null) {
+            return new ArrayList<>();
+        }
+        
+        List<Proyecto> proyectos = proyectoDAO.findByUsuarioResponsable(usuario);
+        List<ProyectoCompletoDTO> proyectosCompletos = new ArrayList<>();
+        
+        for (Proyecto proyecto : proyectos) {
+            Long idUsuarioCreador = proyecto.getUsuarioResponsable() != null ? proyecto.getUsuarioResponsable().getId() : null;
+            Presupuesto_General pg = proyecto.getPresupuestoGeneral();
+            PresupuestoGeneralDTO pgDTO = null;
+            if (pg != null) {
+                pgDTO = new PresupuestoGeneralDTO();
+                pgDTO.setId(pg.getId());
+                pgDTO.setDescripcion(pg.getDescripcion());
+                pgDTO.setCantidadActividades(pg.getActividades() != null ? pg.getActividades().size() : 0);
+                pgDTO.setPresupuestoEstimado(pg.getPresupuestoEstimado());
+            }
+            
+            ProyectoCompletoDTO proyectoDTO = new ProyectoCompletoDTO(
+                    proyecto.getId(),
+                    proyecto.getNombre(),
+                    proyecto.getDescripcion(),
+                    proyecto.getUbicacion(),
+                    proyecto.getFechaInicio() != null ? proyecto.getFechaInicio().atStartOfDay() : null,
+                    proyecto.getFechaFinEstimada() != null ? proyecto.getFechaFinEstimada().atStartOfDay() : null,
+                    proyecto.getEstado() != null ? proyecto.getEstado().name() : null,
+                    proyecto.getPresupuesto(),
+                    proyecto.getFechaCreacion(),
+                    proyecto.getFechaActualizacion(),
+                    idUsuarioCreador,
+                    pgDTO
+            );
+            
+            proyectosCompletos.add(proyectoDTO);
+        }
+        
+        return proyectosCompletos;
     }
 
     @Override
@@ -234,13 +269,62 @@ public class ProyectoServiceImpl implements IProyectoService {
         return proyectoDAO.save(proyectoExistente);
     }
 
+    /**
+     * Método privado para calcular y actualizar el presupuesto estimado
+     * basado en la suma de subtotales de todas las actividades
+     */
+    private void actualizarPresupuestoEstimado(Long presupuestoGeneralId) {
+        Presupuesto_General presupuestoGeneral = presupuestoGeneralDAO.findById(presupuestoGeneralId).orElse(null);
+        if (presupuestoGeneral == null || presupuestoGeneral.getActividades() == null) {
+            return;
+        }
+
+        double totalEstimado = presupuestoGeneral.getActividades().stream()
+                .mapToDouble(actividad -> {
+                    Double subtotal = actividad.getSubtotalPresupuestoUnitario();
+                    return subtotal != null ? subtotal : 0.0;
+                })
+                .sum();
+
+        presupuestoGeneral.setPresupuestoEstimado(totalEstimado);
+        presupuestoGeneralDAO.save(presupuestoGeneral);
+    }
+
+    /**
+     * Método privado para sincronizar automáticamente los subtotales de todas las actividades
+     * con sus respectivos presupuestos unitarios
+     */
+    private void sincronizarSubtotalesActividades(Long presupuestoGeneralId) {
+        Presupuesto_General presupuestoGeneral = presupuestoGeneralDAO.findById(presupuestoGeneralId).orElse(null);
+        if (presupuestoGeneral == null || presupuestoGeneral.getActividades() == null) {
+            return;
+        }
+
+        for (Actividades actividad : presupuestoGeneral.getActividades()) {
+            // Sincronizar el subtotal de la actividad con el total del presupuesto unitario
+            actividad.sincronizarSubtotalConPresupuestoUnitario();
+            // Guardar la actividad actualizada
+            actividadesDAO.save(actividad);
+        }
+    }
+
     @Override
     public ProyectoCompletoDTO getProyectoCompleto(Long id) {
         Proyecto proyecto = proyectoDAO.findById(id).orElse(null);
         if (proyecto == null) {
             return null;
         }
-        String usuarioNombre = proyecto.getUsuarioResponsable() != null ? proyecto.getUsuarioResponsable().getNombre() : null;
+
+        // Sincronizar subtotales de actividades y actualizar presupuesto estimado
+        if (proyecto.getPresupuestoGeneral() != null) {
+            // Primero sincronizar los subtotales de las actividades
+            sincronizarSubtotalesActividades(proyecto.getPresupuestoGeneral().getId());
+            // Luego actualizar el presupuesto estimado basado en los subtotales actualizados
+            actualizarPresupuestoEstimado(proyecto.getPresupuestoGeneral().getId());
+            // Recargar el proyecto para obtener los datos actualizados
+            proyecto = proyectoDAO.findById(id).orElse(null);
+        }
+        Long idUsuarioCreador = proyecto.getUsuarioResponsable() != null ? proyecto.getUsuarioResponsable().getId() : null;
         Presupuesto_General pg = proyecto.getPresupuestoGeneral();
         PresupuestoGeneralDTO pgDTO = null;
         if (pg != null) {
@@ -248,6 +332,7 @@ public class ProyectoServiceImpl implements IProyectoService {
             pgDTO.setId(pg.getId());
             pgDTO.setDescripcion(pg.getDescripcion());
             pgDTO.setCantidadActividades(pg.getActividades()!=null ? pg.getActividades().size() : 0);
+            pgDTO.setPresupuestoEstimado(pg.getPresupuestoEstimado());
         }
         return new ProyectoCompletoDTO(
                 proyecto.getId(),
@@ -260,7 +345,7 @@ public class ProyectoServiceImpl implements IProyectoService {
                 proyecto.getPresupuesto(),
                 proyecto.getFechaCreacion(),
                 proyecto.getFechaActualizacion(),
-                usuarioNombre,
+                idUsuarioCreador,
                 pgDTO
         );
     }

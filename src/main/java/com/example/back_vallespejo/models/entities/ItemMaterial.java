@@ -14,7 +14,7 @@ public class ItemMaterial {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lista_materiales_id", nullable = false)

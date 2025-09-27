@@ -29,6 +29,9 @@ public class Actividades {
 
     private String estado;
 
+    @Column(name = "subtotal_presupuesto_unitario")
+    private Double subtotalPresupuestoUnitario = 0.0;
+
     public Long getId() {
         return id;
     }
@@ -75,6 +78,34 @@ public class Actividades {
 
     public void setPresupuestoUnitario(Presupuesto_unitario presupuestoUnitario) {
         this.presupuestoUnitario = presupuestoUnitario;
+    }
+
+    public Double getSubtotalPresupuestoUnitario() {
+        return subtotalPresupuestoUnitario;
+    }
+
+    public void setSubtotalPresupuestoUnitario(Double subtotalPresupuestoUnitario) {
+        this.subtotalPresupuestoUnitario = subtotalPresupuestoUnitario;
+    }
+
+    /**
+     * Método para sincronizar automáticamente el subtotal de la actividad
+     * con el total del presupuesto unitario vinculado
+     */
+    public void sincronizarSubtotalConPresupuestoUnitario() {
+        if (this.presupuestoUnitario != null) {
+            Double totalPresupuestoUnitario = this.presupuestoUnitario.getTotal_presupuesto_unitario();
+            this.subtotalPresupuestoUnitario = totalPresupuestoUnitario != null ? totalPresupuestoUnitario : 0.0;
+        }
+    }
+
+    /**
+     * Método para obtener el subtotal actualizado automáticamente
+     * desde el presupuesto unitario vinculado
+     */
+    public Double getSubtotalActualizado() {
+        sincronizarSubtotalConPresupuestoUnitario();
+        return this.subtotalPresupuestoUnitario;
     }
 
 }

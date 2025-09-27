@@ -1,9 +1,7 @@
 package com.example.back_vallespejo.service;
 
 import com.example.back_vallespejo.models.dao.IPresupuestoGeneralDAO;
-import com.example.back_vallespejo.models.dto.PresupuestoUnitarioDTO;
 import com.example.back_vallespejo.models.entities.Presupuesto_General;
-import com.example.back_vallespejo.models.entities.Presupuesto_unitario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -29,6 +27,19 @@ public class PresupuestoGeneralServiceImpl implements IPresupuestoGeneralService
     @Override
     public Presupuesto_General findById(Long id) {
         return dao.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<Long> getActividadesIdsByPresupuestoId(Long presupuestoGeneralId) {
+        Presupuesto_General presupuesto = dao.findById(presupuestoGeneralId).orElse(null);
+        
+        if (presupuesto == null || presupuesto.getActividades() == null) {
+            return new ArrayList<>();
+        }
+        
+        return presupuesto.getActividades().stream()
+                .map(actividad -> actividad.getId())
+                .toList();
     }
 
     @Override

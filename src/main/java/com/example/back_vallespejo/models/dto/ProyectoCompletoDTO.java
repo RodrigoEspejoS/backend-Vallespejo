@@ -15,10 +15,9 @@ public class ProyectoCompletoDTO {
     private LocalDateTime fechaInicio;
     private LocalDateTime fechaEstimadaFinalizacion;
     private String estado;
-    private Double presupuestoEstimado;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaModificacion;
-    private String usuarioCreadorNombre;
+    private Long idUsuarioCreador;
     private PresupuestoGeneralDTO presupuestoGeneral;
 
     public ProyectoCompletoDTO() {
@@ -28,7 +27,7 @@ public class ProyectoCompletoDTO {
     public ProyectoCompletoDTO(Long id, String nombre, String descripcion, String ubicacion, 
                              LocalDateTime fechaInicio, LocalDateTime fechaEstimadaFinalizacion, 
                              String estado, Double presupuestoEstimado, LocalDateTime fechaCreacion, 
-                             LocalDateTime fechaModificacion, String usuarioCreadorNombre, 
+                             LocalDateTime fechaModificacion, Long idUsuarioCreador,
                              PresupuestoGeneralDTO presupuestoGeneral) {
         this.id = id;
         this.nombre = nombre;
@@ -37,10 +36,9 @@ public class ProyectoCompletoDTO {
         this.fechaInicio = fechaInicio;
         this.fechaEstimadaFinalizacion = fechaEstimadaFinalizacion;
         this.estado = estado;
-        this.presupuestoEstimado = presupuestoEstimado;
         this.fechaCreacion = fechaCreacion;
         this.fechaModificacion = fechaModificacion;
-        this.usuarioCreadorNombre = usuarioCreadorNombre;
+        this.idUsuarioCreador = idUsuarioCreador;
         this.presupuestoGeneral = presupuestoGeneral;
     }
 
@@ -100,13 +98,6 @@ public class ProyectoCompletoDTO {
         this.estado = estado;
     }
 
-    public Double getPresupuestoEstimado() {
-        return presupuestoEstimado;
-    }
-
-    public void setPresupuestoEstimado(Double presupuestoEstimado) {
-        this.presupuestoEstimado = presupuestoEstimado;
-    }
 
     public LocalDateTime getFechaCreacion() {
         return fechaCreacion;
@@ -124,12 +115,12 @@ public class ProyectoCompletoDTO {
         this.fechaModificacion = fechaModificacion;
     }
 
-    public String getUsuarioCreadorNombre() {
-        return usuarioCreadorNombre;
+    public Long getIdUsuarioCreador() {
+        return idUsuarioCreador;
     }
 
-    public void setUsuarioCreadorNombre(String usuarioCreadorNombre) {
-        this.usuarioCreadorNombre = usuarioCreadorNombre;
+    public void setIdUsuarioCreador(Long idUsuarioCreador) {
+        this.idUsuarioCreador = idUsuarioCreador;
     }
 
     public PresupuestoGeneralDTO getPresupuestoGeneral() { return presupuestoGeneral; }

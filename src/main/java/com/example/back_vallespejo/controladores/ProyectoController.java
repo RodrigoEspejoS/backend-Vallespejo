@@ -4,6 +4,7 @@ import com.example.back_vallespejo.models.dto.ProyectoDTO;
 import com.example.back_vallespejo.models.dto.ProyectoCompletoDTO;
 import com.example.back_vallespejo.models.entities.Proyecto;
 import com.example.back_vallespejo.service.IProyectoService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,5 +63,11 @@ public class ProyectoController {
     @Transactional(readOnly = true)
     public ProyectoCompletoDTO getProyectoCompleto(@PathVariable Long id){
         return proyectoService.getProyectoCompleto(id);
+    }
+
+    @GetMapping("/proyecto/todos/{idUsuarioCreador}")
+    public ResponseEntity<List<ProyectoCompletoDTO>> getProyectosByUsuario(@PathVariable Long idUsuarioCreador){
+        List<ProyectoCompletoDTO> proyectos = proyectoService.findByUsuarioResponsableId(idUsuarioCreador);
+        return ResponseEntity.ok(proyectos);
     }
 }

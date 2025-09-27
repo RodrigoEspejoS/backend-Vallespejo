@@ -16,6 +16,9 @@ public class Presupuesto_General {
     @OneToMany(mappedBy = "presupuestoGeneral", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Actividades> actividades;
 
+    @Column(name = "presupuesto_estimado")
+    private Double presupuestoEstimado = 0.0;
+
     public List<Actividades> getActividades() {
         return actividades;
     }
@@ -37,6 +40,14 @@ public class Presupuesto_General {
     }
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Double getPresupuestoEstimado() {
+        return presupuestoEstimado;
+    }
+
+    public void setPresupuestoEstimado(Double presupuestoEstimado) {
+        this.presupuestoEstimado = presupuestoEstimado;
     }
 
     //cada presupuesto general cuanta con Actividades que dentro cada actividad se crea automaticamente

@@ -7,5 +7,6 @@ public interface IPresupuestoGeneralService {
     Presupuesto_General registrar(Presupuesto_General entity);
     List<Presupuesto_General> getAll();
     Presupuesto_General findById(Long id);
+    List<Long> getActividadesIdsByPresupuestoId(Long presupuestoGeneralId);
     void delete(Presupuesto_General entity);
 }
