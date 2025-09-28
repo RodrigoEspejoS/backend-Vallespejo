@@ -1,6 +1,5 @@
 package com.example.back_vallespejo.controladores;
 import com.example.back_vallespejo.models.entities.U_Item_EquipoyHerramientas;
-import com.example.back_vallespejo.models.dto.ItemCatalogoResponseDTO;
 import com.example.back_vallespejo.models.dto.ItemPresupuestoDTO;
 import com.example.back_vallespejo.models.dto.ObtenerTotalesPresupuestoUnitarioDTO;
 import com.example.back_vallespejo.models.dto.PresupuestoUnitarioDTO;
@@ -110,26 +109,30 @@ public class PresupuestoUnitarioController {
     @PostMapping("/presupuesto-unitario/{id}/materiales")
     @ResponseStatus(HttpStatus.CREATED)
     public String agregarItemMaterial(@PathVariable Long id, @RequestBody AddItemMaterialRequest req) {
+        
         Presupuesto_unitario presupuesto = presupuestoUnitarioService.findById(id);
+        
+        // control de errores para evitar nulos
         if (presupuesto == null) throw new RuntimeException("Presupuesto unitario no encontrado");
-        if (req.getMaterialId()==null) throw new RuntimeException("materialId requerido");
+        if (req.getMaterialId() == null) throw new RuntimeException("materialId requerido");
+        
+        // Material es la base de datos para crear materiales
         Material material = materialDAO.findById(req.getMaterialId())
                 .orElseThrow(() -> new RuntimeException("Material no encontrado"));
-        ListaMateriales lista = presupuesto.getListaMateriales();
-        // Validar si ya existe el material en la lista
-        if (lista.getItems() != null && lista.getItems().stream().anyMatch(i -> i.getMaterial().getId().equals(req.getMaterialId()))) {
-            throw new RuntimeException("El material ya existe en la lista");
-        }
-        ItemMaterial item = new ItemMaterial();
-        item.setListaMateriales(lista);
+        
+        ListaMateriales lista = presupuesto.getListaMateriales(); // ListaMateriales es la lista de materiales que esta dentro de presupuesto unitario
+        if (lista == null) throw new RuntimeException("Lista de materiales no inicializada en el presupuesto"); // control de errores, pero al crear una actividad automaticamente se crean las 3 listas correspondientes
+        
+        ItemMaterial item = new ItemMaterial(); // crea un nuevo item de material
+        item.setListaMateriales(lista); // lo asigna a la lista de materiales del presupuesto que ya se ingresó su id
         item.setMaterial(material);
-        // Snapshot campos
-        item.setCantidad(req.getCantidad()!=null? req.getCantidad():1);
+        item.setCantidad(req.getCantidad() != null ? req.getCantidad() : 1);
         // sincroniza precio y subtotal internamente
+        
         if (lista.getItems() == null) lista.setItems(new java.util.ArrayList<>());
         lista.getItems().add(item);
-    presupuestoUnitarioService.registrar(presupuesto);
-    return "Agregado correctamente";
+        presupuestoUnitarioService.registrar(presupuesto);
+        return "Agregado correctamente";
     }
 
         @PutMapping("/presupuesto-unitario/equipos/{itemId}/cantidad")
@@ -144,6 +147,7 @@ public class PresupuestoUnitarioController {
         resp.put("nuevaCantidad", item.getCantidad());
         return resp;
     }
+
 
     @PutMapping("/presupuesto-unitario/mano-obra/{itemId}/cantidad")
     public Map<String,Object> actualizarCantidadManoObra(@PathVariable Long itemId, @RequestBody Double nuevaCantidad) {

@@ -14,14 +14,14 @@ public class ItemMaterial {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lista_materiales_id", nullable = false)
     private ListaMateriales listaMateriales;
 
     
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "material_id", nullable = false)
     private Material material;
 

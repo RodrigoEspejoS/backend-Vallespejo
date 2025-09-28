@@ -172,6 +172,14 @@ public class ProyectoServiceImpl implements IProyectoService {
         List<ProyectoCompletoDTO> proyectosCompletos = new ArrayList<>();
         
         for (Proyecto proyecto : proyectos) {
+            // Sincronizar subtotales de actividades y actualizar presupuesto estimado (misma lógica que getProyectoCompleto)
+            if (proyecto.getPresupuestoGeneral() != null) {
+                // Primero sincronizar los subtotales de las actividades
+                sincronizarSubtotalesActividades(proyecto.getPresupuestoGeneral().getId());
+                // Luego actualizar el presupuesto estimado basado en los subtotales actualizados
+                actualizarPresupuestoEstimado(proyecto.getPresupuestoGeneral().getId());
+            }
+            
             Long idUsuarioCreador = proyecto.getUsuarioResponsable() != null ? proyecto.getUsuarioResponsable().getId() : null;
             Presupuesto_General pg = proyecto.getPresupuestoGeneral();
             PresupuestoGeneralDTO pgDTO = null;
