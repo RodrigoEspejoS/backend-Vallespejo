@@ -5,6 +5,7 @@ import com.example.back_vallespejo.models.dto.ObtenerTotalesPresupuestoUnitarioD
 import com.example.back_vallespejo.models.dto.PresupuestoUnitarioDTO;
 import com.example.back_vallespejo.models.dto.AddItemMaterialRequest;
 import com.example.back_vallespejo.models.dto.AddItemCatalogRequest;
+import com.example.back_vallespejo.models.dto.UpdatePresupuestoUnitarioRequest;
 import com.example.back_vallespejo.models.entities.Material;
 import com.example.back_vallespejo.models.entities.TD_Presupuestos;
 import com.example.back_vallespejo.models.dao.IItemMaterialDAO;
@@ -184,19 +185,30 @@ public class PresupuestoUnitarioController {
         return dto;
     }
 
-    @PutMapping("/presupuesto-unitario/{id}")
-    public ResponseEntity<Presupuesto_unitario> editarPU(@PathVariable Long id,@Valid @RequestBody PresupuestoUnitarioDTO presupuestoUnitarioDTO){
-        try {
-            Presupuesto_unitario puActualizado = presupuestoUnitarioService.updatePU(id, presupuestoUnitarioDTO);
-
-            if (puActualizado == null){
-                return ResponseEntity.notFound().build();
-            }
-
-            return  ResponseEntity.ok(puActualizado);
-        } catch (RuntimeException e){
-            return ResponseEntity.badRequest().build();
+    @PutMapping("/presupuesto-unitario/{id}/rendimiento")
+    public ResponseEntity<String> editarRendimientoPresupuesto(@PathVariable Long id, @RequestBody UpdatePresupuestoUnitarioRequest request) {
+        
+        Presupuesto_unitario presupuesto = presupuestoUnitarioService.findById(id);
+        
+        // control de errores para evitar nulos
+        if (presupuesto == null) {
+            return ResponseEntity.badRequest().body("Presupuesto unitario no encontrado");
         }
+        
+        // Actualizar solo los campos especificados
+        if (request.getUnidad() != null) {
+            presupuesto.setUnidad(request.getUnidad());
+        }
+        if (request.getU_rendimiento() != null) {
+            presupuesto.setU_rendimiento(request.getU_rendimiento());
+        }
+        if (request.getT_rendimiento() != null) {
+            presupuesto.setT_rendimiento(request.getT_rendimiento());
+        }
+        
+        // Guardar cambios
+        presupuestoUnitarioService.registrar(presupuesto);
+        return ResponseEntity.ok("Rendimiento actualizado correctamente");
     }
 
     // Endpoint que sirve para obtener datos totales de cada lista 
