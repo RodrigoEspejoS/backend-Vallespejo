@@ -5,6 +5,7 @@ public class ObtenerTotalesPresupuestoUnitarioDTO {
     private Double subTotalEquipos;
     private Double subTotalManoObra;
     private Double total;
+    private Double totalParcial;
 
     public ObtenerTotalesPresupuestoUnitarioDTO() {}
 
@@ -28,4 +29,7 @@ public class ObtenerTotalesPresupuestoUnitarioDTO {
 
     public Double getTotal() { return total; }
     public void setTotal(Double total) { this.total = total; }
+    
+    public Double getTotalParcial() { return totalParcial; }
+    public void setTotalParcial(Double totalParcial) { this.totalParcial = totalParcial; }
 }

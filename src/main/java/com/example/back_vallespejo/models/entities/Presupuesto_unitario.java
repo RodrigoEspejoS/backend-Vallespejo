@@ -26,6 +26,9 @@ public class Presupuesto_unitario {
     //este será el total de la suma de sub total Mano de obra, Lista de materiales y EquiposyHerramientas
     private Double Total_presupuesto_unitario;
 
+    //presupuesto parcial: Total_presupuesto_unitario * u_rendimiento
+    private Double Total_presupuesto_parcial;
+
     //cada presupuesto unitario está vinculado a su propia lista de Mano de obra, servicios generales y Materiales
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "u_equipoyherramientas_id", referencedColumnName = "id", nullable = false)
@@ -38,6 +41,8 @@ public class Presupuesto_unitario {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "u_manodeobra_id", referencedColumnName = "id", nullable = false)
     private U_ManodeObra uManodeObra;
+
+
 
     public Long getId() {
         return id;
@@ -110,6 +115,15 @@ public class Presupuesto_unitario {
     public void setUManodeObra(U_ManodeObra uManodeObra) {
         this.uManodeObra = uManodeObra;
     }
+
+    public Double getTotal_presupuesto_parcial() {
+        // Calcular automáticamente el presupuesto parcial cada vez que se solicita
+        return calcularPresupuestoParcial();
+    }
+
+    public void setTotal_presupuesto_parcial(Double total_presupuesto_parcial) {
+        this.Total_presupuesto_parcial = total_presupuesto_parcial;
+    }
         public Double getTotal_presupuesto_unitario() {
             double total = 0.0;
             if (uEquipoyHerramientas != null) {
@@ -123,5 +137,20 @@ public class Presupuesto_unitario {
             }
             this.Total_presupuesto_unitario = total;
             return Total_presupuesto_unitario;
+        }
+        
+        // Método para calcular el presupuesto parcial: Total_presupuesto_unitario * u_rendimiento
+        public Double calcularPresupuestoParcial() {
+            // Primero asegurar que el total unitario esté actualizado
+            getTotal_presupuesto_unitario();
+            
+            // Calcular presupuesto parcial: Total_presupuesto_unitario * u_rendimiento
+            if (u_rendimiento != null && u_rendimiento > 0 && Total_presupuesto_unitario != null) {
+                this.Total_presupuesto_parcial = Total_presupuesto_unitario * u_rendimiento;
+            } else {
+                this.Total_presupuesto_parcial = 0.0;
+            }
+            
+            return Total_presupuesto_parcial;
         }
 }

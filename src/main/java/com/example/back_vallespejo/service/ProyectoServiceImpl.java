@@ -289,8 +289,12 @@ public class ProyectoServiceImpl implements IProyectoService {
 
         double totalEstimado = presupuestoGeneral.getActividades().stream()
                 .mapToDouble(actividad -> {
-                    Double subtotal = actividad.getSubtotalPresupuestoUnitario();
-                    return subtotal != null ? subtotal : 0.0;
+                    // Usar el presupuesto parcial en lugar del unitario
+                    if (actividad.getPresupuestoUnitario() != null) {
+                        Double presupuestoParcial = actividad.getPresupuestoUnitario().getTotal_presupuesto_parcial();
+                        return presupuestoParcial != null ? presupuestoParcial : 0.0;
+                    }
+                    return 0.0;
                 })
                 .sum();
 

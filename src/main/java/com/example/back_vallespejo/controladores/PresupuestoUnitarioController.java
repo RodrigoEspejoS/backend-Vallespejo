@@ -20,6 +20,8 @@ import com.example.back_vallespejo.models.entities.ListaMateriales;
 import com.example.back_vallespejo.models.entities.Presupuesto_unitario;
 import com.example.back_vallespejo.models.entities.U_EquipoyHerramientas;
 import com.example.back_vallespejo.models.entities.U_ManodeObra;
+import com.example.back_vallespejo.models.entities.Actividades;
+import com.example.back_vallespejo.models.dao.IActividadesDAO;
 import com.example.back_vallespejo.service.IPresupuestoUnitarioService;
 // import com.example.back_vallespejo.service.PresupuestoUnitarioDTOAssembler; // Reemplazado por método de servicio
 
@@ -49,6 +51,8 @@ public class PresupuestoUnitarioController {
     private ITDPresupuestosDAO tdPresupuestosDAO;
     @Autowired
     private IMaterialDAO materialDAO;
+    @Autowired
+    private IActividadesDAO actividadesDAO;
 
     @PostMapping("/presupuesto-unitario/{id}/manodeobra")
     @ResponseStatus(HttpStatus.CREATED)
@@ -196,6 +200,9 @@ public class PresupuestoUnitarioController {
         }
         
         // Actualizar solo los campos especificados
+        if (request.getDescripcion() != null && !request.getDescripcion().trim().isEmpty()) {
+            presupuesto.setDescripcion(request.getDescripcion());
+        }
         if (request.getUnidad() != null) {
             presupuesto.setUnidad(request.getUnidad());
         }
@@ -208,7 +215,36 @@ public class PresupuestoUnitarioController {
         
         // Guardar cambios
         presupuestoUnitarioService.registrar(presupuesto);
-        return ResponseEntity.ok("Rendimiento actualizado correctamente");
+        return ResponseEntity.ok("Presupuesto unitario actualizado correctamente");
+    }
+
+    @DeleteMapping("/presupuesto-unitario/{id}")
+    public ResponseEntity<String> eliminarPresupuestoUnitario(@PathVariable Long id) {
+        
+        Presupuesto_unitario presupuesto = presupuestoUnitarioService.findById(id);
+        
+        // control de errores para evitar nulos
+        if (presupuesto == null) {
+            return ResponseEntity.badRequest().body("Presupuesto unitario no encontrado");
+        }
+        
+        try {
+            // Buscar la actividad que referencia este presupuesto unitario
+            Actividades actividad = actividadesDAO.findByPresupuestoUnitario(presupuesto);
+            
+            // Si existe una actividad vinculada, eliminarla primero
+            if (actividad != null) {
+                actividadesDAO.delete(actividad);
+            }
+            
+            // Ahora eliminar el presupuesto unitario y todas sus tablas relacionadas
+            presupuestoUnitarioService.delete(presupuesto);
+            
+            return ResponseEntity.ok("Presupuesto unitario y actividad relacionada eliminados correctamente");
+            
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al eliminar presupuesto unitario: " + e.getMessage());
+        }
     }
 
     // Endpoint que sirve para obtener datos totales de cada lista 
@@ -225,6 +261,7 @@ public class PresupuestoUnitarioController {
         dto.setSubTotalEquipos(subTotalEquipos);
         dto.setSubTotalManoObra(subTotalManoObra);
         dto.setTotal(total);
+        dto.setTotalParcial(entity.getTotal_presupuesto_parcial());
         return dto;
     }
 

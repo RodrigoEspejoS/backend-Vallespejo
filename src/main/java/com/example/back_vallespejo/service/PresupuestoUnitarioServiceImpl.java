@@ -143,6 +143,9 @@ public class PresupuestoUnitarioServiceImpl implements IPresupuestoUnitarioServi
         double subtotalManoObra = (entity.getUManodeObra() != null) ? entity.getUManodeObra().getSubtotal() : 0.0;
         double total = subtotalEquipos + subtotalMateriales + subtotalManoObra;
         dto.setTotalPresupuestoUnitario(total);
+        
+        // Calcular presupuesto parcial
+        dto.setTotalPresupuestoParcial(entity.getTotal_presupuesto_parcial());
 
         return dto;
     }
@@ -306,4 +309,5 @@ public class PresupuestoUnitarioServiceImpl implements IPresupuestoUnitarioServi
         return dao.save(puExistente.get());
 
     }
+
 }

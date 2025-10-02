@@ -7,6 +7,7 @@ public class PresupuestoUnitarioDTO {
     private Double u_rendimiento;
     private String t_rendimiento;
     private Double totalPresupuestoUnitario;
+    private Double totalPresupuestoParcial;
     
     private ListaMaterialesDTO listaMateriales; 
     private EquiposHerramientasDTO equiposHerramientas;
@@ -24,6 +25,8 @@ public class PresupuestoUnitarioDTO {
     public void setT_rendimiento(String t_rendimiento) { this.t_rendimiento = t_rendimiento; }
     public Double getTotalPresupuestoUnitario() { return totalPresupuestoUnitario; }
     public void setTotalPresupuestoUnitario(Double totalPresupuestoUnitario) { this.totalPresupuestoUnitario = totalPresupuestoUnitario; }
+    public Double getTotalPresupuestoParcial() { return totalPresupuestoParcial; }
+    public void setTotalPresupuestoParcial(Double totalPresupuestoParcial) { this.totalPresupuestoParcial = totalPresupuestoParcial; }
     public ListaMaterialesDTO getListaMateriales() { return listaMateriales; }
     public void setListaMateriales(ListaMaterialesDTO listaMateriales) { this.listaMateriales = listaMateriales; }
     public EquiposHerramientasDTO getEquiposHerramientas() { return equiposHerramientas; }

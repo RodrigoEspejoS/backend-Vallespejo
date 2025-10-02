@@ -1,6 +1,7 @@
 package com.example.back_vallespejo.models.dto;
 
 public class UpdatePresupuestoUnitarioRequest {
+    private String descripcion;
     private String unidad;
     private Double u_rendimiento;
     private String t_rendimiento;
@@ -29,5 +30,12 @@ public class UpdatePresupuestoUnitarioRequest {
 
     public void setT_rendimiento(String t_rendimiento) {
         this.t_rendimiento = t_rendimiento;
+    }
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 }
