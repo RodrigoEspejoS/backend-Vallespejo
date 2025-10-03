@@ -6,6 +6,9 @@ import com.example.back_vallespejo.models.dto.PresupuestoUnitarioDTO;
 import com.example.back_vallespejo.models.dto.AddItemMaterialRequest;
 import com.example.back_vallespejo.models.dto.AddItemCatalogRequest;
 import com.example.back_vallespejo.models.dto.UpdatePresupuestoUnitarioRequest;
+import com.example.back_vallespejo.models.dto.UpdateItemEquipoRequest;
+import com.example.back_vallespejo.models.dto.UpdateItemManoObraRequest;
+import com.example.back_vallespejo.models.dto.UpdateItemMaterialRequest;
 import com.example.back_vallespejo.models.entities.Material;
 import com.example.back_vallespejo.models.entities.TD_Presupuestos;
 import com.example.back_vallespejo.models.dao.IItemMaterialDAO;
@@ -139,44 +142,155 @@ public class PresupuestoUnitarioController {
         return "Agregado correctamente";
     }
 
-        @PutMapping("/presupuesto-unitario/equipos/{itemId}/cantidad")
-    public Map<String,Object> actualizarCantidadEquipo(@PathVariable Long itemId, @RequestBody Double nuevaCantidad) {
-        U_Item_EquipoyHerramientas item = itemEquiposDAO.findById(itemId)
-            .orElseThrow(() -> new RuntimeException("ItemEquipo no encontrado"));
-        item.setCantidad(nuevaCantidad);
-        itemEquiposDAO.save(item);
-        Map<String,Object> resp = new HashMap<>();
-        resp.put("status", "OK");
-        resp.put("itemId", item.getId());
-        resp.put("nuevaCantidad", item.getCantidad());
-        return resp;
+    @PutMapping("/presupuesto-unitario/{id}/equipos/item/{itemId}")
+    public ResponseEntity<?> actualizarItemEquipo(@PathVariable Long id, @PathVariable Long itemId, @RequestBody UpdateItemEquipoRequest request) {
+        try {
+            // Verificar que el presupuesto unitario existe
+            Presupuesto_unitario presupuesto = presupuestoUnitarioService.findById(id);
+            if (presupuesto == null) {
+                return ResponseEntity.badRequest().body("Presupuesto unitario no encontrado");
+            }
+            
+            // Buscar el item de equipo
+            U_Item_EquipoyHerramientas item = itemEquiposDAO.findById(itemId)
+                    .orElseThrow(() -> new RuntimeException("Item de equipo no encontrado"));
+            
+            // Verificar que el item pertenece a la lista de equipos de este presupuesto
+            if (!item.getUEquipoyHerramientas().getId().equals(presupuesto.getUEquipoyHerramientas().getId())) {
+                return ResponseEntity.badRequest().body("El item no pertenece a este presupuesto unitario");
+            }
+            
+            // Actualizar solo los campos que vienen en el request
+            if (request.getCodigo() != null) {
+                item.setCodigo(request.getCodigo());
+            }
+            if (request.getDescripcion() != null) {
+                item.setDesc_recurso(request.getDescripcion());
+            }
+            if (request.getUnidad() != null) {
+                item.setUnidad(request.getUnidad());
+            }
+            if (request.getCantidad() != null) {
+                item.setCantidad(request.getCantidad());
+            }
+            if (request.getCuadrilla() != null) {
+                item.setCuadrilla(request.getCuadrilla());
+            }
+            if (request.getPrecioUnitario() != null) {
+                item.setPrecio_unitario(request.getPrecioUnitario());
+            }
+            
+            // Guardar cambios
+            itemEquiposDAO.save(item);
+            
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("status", "OK");
+            resp.put("mensaje", "Item de equipo actualizado correctamente");
+            resp.put("itemId", item.getId());
+            return ResponseEntity.ok(resp);
+            
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al actualizar item de equipo: " + e.getMessage());
+        }
     }
 
 
-    @PutMapping("/presupuesto-unitario/mano-obra/{itemId}/cantidad")
-    public Map<String,Object> actualizarCantidadManoObra(@PathVariable Long itemId, @RequestBody Double nuevaCantidad) {
-        U_Item_ManodeObra item = manoObraDAO.findById(itemId)
-            .orElseThrow(() -> new RuntimeException("ItemManodeObra no encontrado"));
-        item.setCantidad(nuevaCantidad);
-        manoObraDAO.save(item);
-        Map<String,Object> resp = new HashMap<>();
-        resp.put("status", "OK");
-        resp.put("itemId", item.getId());
-        resp.put("nuevaCantidad", item.getCantidad());
-        return resp;
+    @PutMapping("/presupuesto-unitario/{id}/mano-obra/item/{itemId}")
+    public ResponseEntity<?> actualizarItemManoObra(@PathVariable Long id, @PathVariable Long itemId, @RequestBody UpdateItemManoObraRequest request) {
+        try {
+            // Verificar que el presupuesto unitario existe
+            Presupuesto_unitario presupuesto = presupuestoUnitarioService.findById(id);
+            if (presupuesto == null) {
+                return ResponseEntity.badRequest().body("Presupuesto unitario no encontrado");
+            }
+            
+            // Buscar el item de mano de obra
+            U_Item_ManodeObra item = manoObraDAO.findById(itemId)
+                    .orElseThrow(() -> new RuntimeException("Item de mano de obra no encontrado"));
+            
+            // Verificar que el item pertenece a la lista de mano de obra de este presupuesto
+            if (!item.getListaManodeObra().getId().equals(presupuesto.getUManodeObra().getId())) {
+                return ResponseEntity.badRequest().body("El item no pertenece a este presupuesto unitario");
+            }
+            
+            // Actualizar solo los campos que vienen en el request
+            if (request.getCodigo() != null) {
+                item.setCodigo(request.getCodigo());
+            }
+            if (request.getDescripcion() != null) {
+                item.setDesc_recurso(request.getDescripcion());
+            }
+            if (request.getUnidad() != null) {
+                item.setUnidad(request.getUnidad());
+            }
+            if (request.getCantidad() != null) {
+                item.setCantidad(request.getCantidad());
+            }
+            if (request.getCuadrilla() != null) {
+                item.setCuadrilla(request.getCuadrilla());
+            }
+            if (request.getPrecioUnitario() != null) {
+                item.setPrecio_unitario(request.getPrecioUnitario());
+            }
+            
+            // Guardar cambios
+            manoObraDAO.save(item);
+            
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("status", "OK");
+            resp.put("mensaje", "Item de mano de obra actualizado correctamente");
+            resp.put("itemId", item.getId());
+            return ResponseEntity.ok(resp);
+            
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al actualizar item de mano de obra: " + e.getMessage());
+        }
     }
 
-    @PutMapping("/presupuesto-unitario/materiales/{itemId}/cantidad")
-    public Map<String,Object> actualizarCantidadMaterial(@PathVariable Long itemId, @RequestBody Integer nuevaCantidad) {
-        ItemMaterial item = itemMaterialDAO.findById(itemId)
-            .orElseThrow(() -> new RuntimeException("ItemMaterial no encontrado"));
-        item.setCantidad(nuevaCantidad);
-        itemMaterialDAO.save(item);
-        Map<String,Object> resp = new HashMap<>();
-        resp.put("status", "OK");
-        resp.put("itemId", item.getId());
-        resp.put("nuevaCantidad", item.getCantidad());
-        return resp;
+    @PutMapping("/presupuesto-unitario/{id}/materiales/item/{itemId}")
+    public ResponseEntity<?> actualizarItemMaterial(@PathVariable Long id, @PathVariable Long itemId, @RequestBody UpdateItemMaterialRequest request) {
+        try {
+            // Verificar que el presupuesto unitario existe
+            Presupuesto_unitario presupuesto = presupuestoUnitarioService.findById(id);
+            if (presupuesto == null) {
+                return ResponseEntity.badRequest().body("Presupuesto unitario no encontrado");
+            }
+            
+            // Buscar el item de material
+            ItemMaterial item = itemMaterialDAO.findById(itemId)
+                    .orElseThrow(() -> new RuntimeException("Item de material no encontrado"));
+            
+            // Verificar que el item pertenece a la lista de materiales de este presupuesto
+            if (!item.getListaMateriales().getId().equals(presupuesto.getListaMateriales().getId())) {
+                return ResponseEntity.badRequest().body("El item no pertenece a este presupuesto unitario");
+            }
+            
+            // Actualizar solo los campos que vienen en el request
+            if (request.getCodigo() != null) {
+                item.setCodigo(request.getCodigo());
+            }
+            if (request.getDescripcion() != null) {
+                item.setDesc_recurso(request.getDescripcion());
+            }
+            if (request.getCantidad() != null) {
+                item.setCantidad(request.getCantidad());
+            }
+            if (request.getPrecioUnitario() != null) {
+                item.setPrecioUnitarioRecurso(request.getPrecioUnitario());
+            }
+            
+            // Guardar cambios
+            itemMaterialDAO.save(item);
+            
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("status", "OK");
+            resp.put("mensaje", "Item de material actualizado correctamente");
+            resp.put("itemId", item.getId());
+            return ResponseEntity.ok(resp);
+            
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al actualizar item de material: " + e.getMessage());
+        }
     }
 
 
