@@ -2,8 +2,6 @@ package com.example.back_vallespejo.service;
 
 import com.example.back_vallespejo.models.dao.IListaMaterialesDAO;
 import com.example.back_vallespejo.models.entities.ListaMateriales;
-import com.example.back_vallespejo.models.entities.Proyecto;
-import com.example.back_vallespejo.models.entities.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

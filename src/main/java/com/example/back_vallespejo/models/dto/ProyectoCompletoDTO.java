@@ -1,7 +1,6 @@
 package com.example.back_vallespejo.models.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 /* nOTA R: Este DTO sirve especificamente para el GET de Proyecto, mostrando todos

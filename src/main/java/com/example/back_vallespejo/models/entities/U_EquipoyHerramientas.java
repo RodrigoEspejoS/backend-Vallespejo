@@ -2,7 +2,6 @@ package com.example.back_vallespejo.models.entities;
 
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 

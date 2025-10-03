@@ -3,7 +3,6 @@ package com.example.back_vallespejo.service;
 import com.example.back_vallespejo.models.dto.ProyectoDTO;
 import com.example.back_vallespejo.models.dto.ProyectoCompletoDTO;
 import com.example.back_vallespejo.models.entities.Proyecto;
-import com.example.back_vallespejo.models.entities.Usuario;
 
 import java.util.List;
 

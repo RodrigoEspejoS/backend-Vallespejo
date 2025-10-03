@@ -1,8 +1,6 @@
 package com.example.back_vallespejo.service;
 
 import com.example.back_vallespejo.models.entities.ListaMateriales;
-import com.example.back_vallespejo.models.entities.Usuario;
-import com.example.back_vallespejo.models.entities.Proyecto;
 
 import java.util.List;
 

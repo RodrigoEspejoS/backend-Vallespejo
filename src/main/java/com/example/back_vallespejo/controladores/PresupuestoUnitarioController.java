@@ -25,7 +25,6 @@ import com.example.back_vallespejo.models.dao.IActividadesDAO;
 import com.example.back_vallespejo.service.IPresupuestoUnitarioService;
 // import com.example.back_vallespejo.service.PresupuestoUnitarioDTOAssembler; // Reemplazado por método de servicio
 
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
