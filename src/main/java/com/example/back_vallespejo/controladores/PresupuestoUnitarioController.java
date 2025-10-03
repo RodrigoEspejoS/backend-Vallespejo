@@ -284,4 +284,84 @@ public class PresupuestoUnitarioController {
     public List<ItemPresupuestoDTO> obtenerItemsManoObra(@PathVariable Long id) {
         return presupuestoUnitarioService.obtenerItemsManoObra(id);
     }
+
+    // DELETE endpoints para eliminar items específicos de cada lista
+    
+    @DeleteMapping("/presupuesto-unitario/{id}/materiales/item/{itemId}")
+    public ResponseEntity<String> eliminarItemMaterial(@PathVariable Long id, @PathVariable Long itemId) {
+        try {
+            // Verificar que el presupuesto unitario existe
+            Presupuesto_unitario presupuesto = presupuestoUnitarioService.findById(id);
+            if (presupuesto == null) {
+                return ResponseEntity.badRequest().body("Presupuesto unitario no encontrado");
+            }
+            
+            // Buscar el item de material
+            ItemMaterial item = itemMaterialDAO.findById(itemId)
+                    .orElseThrow(() -> new RuntimeException("Item de material no encontrado"));
+            
+            // Verificar que el item pertenece a la lista de materiales de este presupuesto
+            if (!item.getListaMateriales().getId().equals(presupuesto.getListaMateriales().getId())) {
+                return ResponseEntity.badRequest().body("El item no pertenece a este presupuesto unitario");
+            }
+            
+            itemMaterialDAO.delete(item);
+            return ResponseEntity.ok("Item de material eliminado correctamente");
+            
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al eliminar item de material: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/presupuesto-unitario/{id}/equipos/item/{itemId}")
+    public ResponseEntity<String> eliminarItemEquipo(@PathVariable Long id, @PathVariable Long itemId) {
+        try {
+            // Verificar que el presupuesto unitario existe
+            Presupuesto_unitario presupuesto = presupuestoUnitarioService.findById(id);
+            if (presupuesto == null) {
+                return ResponseEntity.badRequest().body("Presupuesto unitario no encontrado");
+            }
+            
+            // Buscar el item de equipo
+            U_Item_EquipoyHerramientas item = itemEquiposDAO.findById(itemId)
+                    .orElseThrow(() -> new RuntimeException("Item de equipo no encontrado"));
+            
+            // Verificar que el item pertenece a la lista de equipos de este presupuesto
+            if (!item.getUEquipoyHerramientas().getId().equals(presupuesto.getUEquipoyHerramientas().getId())) {
+                return ResponseEntity.badRequest().body("El item no pertenece a este presupuesto unitario");
+            }
+            
+            itemEquiposDAO.delete(item);
+            return ResponseEntity.ok("Item de equipo eliminado correctamente");
+            
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al eliminar item de equipo: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/presupuesto-unitario/{id}/mano-obra/item/{itemId}")
+    public ResponseEntity<String> eliminarItemManoObra(@PathVariable Long id, @PathVariable Long itemId) {
+        try {
+            // Verificar que el presupuesto unitario existe
+            Presupuesto_unitario presupuesto = presupuestoUnitarioService.findById(id);
+            if (presupuesto == null) {
+                return ResponseEntity.badRequest().body("Presupuesto unitario no encontrado");
+            }
+            
+            // Buscar el item de mano de obra
+            U_Item_ManodeObra item = manoObraDAO.findById(itemId)
+                    .orElseThrow(() -> new RuntimeException("Item de mano de obra no encontrado"));
+            
+            // Verificar que el item pertenece a la lista de mano de obra de este presupuesto
+            if (!item.getListaManodeObra().getId().equals(presupuesto.getUManodeObra().getId())) {
+                return ResponseEntity.badRequest().body("El item no pertenece a este presupuesto unitario");
+            }
+            
+            manoObraDAO.delete(item);
+            return ResponseEntity.ok("Item de mano de obra eliminado correctamente");
+            
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al eliminar item de mano de obra: " + e.getMessage());
+        }
+    }
 }

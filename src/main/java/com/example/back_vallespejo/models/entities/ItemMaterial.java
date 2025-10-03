@@ -98,7 +98,10 @@ public class ItemMaterial {
     }
 
     public String getCodigo() { return codigo; }
+    public void setCodigo(String codigo) { this.codigo = codigo; }
+    
     public String getDesc_recurso() { return desc_recurso; }
+    public void setDesc_recurso(String desc_recurso) { this.desc_recurso = desc_recurso; }
 
 
     // Métodos de conveniencia
