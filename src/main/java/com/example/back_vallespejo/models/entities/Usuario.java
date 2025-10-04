@@ -26,6 +26,7 @@ public class Usuario {
 
     @Column(length = 100)
     private String apellido;
+
     private String password;
 
     @ManyToOne(fetch = FetchType.EAGER)

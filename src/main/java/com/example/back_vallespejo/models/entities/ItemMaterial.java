@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "item_materiales")
@@ -16,33 +14,34 @@ public class ItemMaterial {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lista_materiales_id", nullable = false)
     private ListaMateriales listaMateriales;
 
-    @NotNull
-    @OneToOne(fetch = FetchType.EAGER)
+    
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "material_id", nullable = false)
     private Material material;
 
-    @NotNull
+    
+    @Column(length = 7)
+    private String codigo;
+
+    
+    @Column(length = 50)
+    private String desc_recurso;
+    
     @Min(value = 1)
     @Column(nullable = false)
     private Integer cantidad;
 
     @DecimalMin(value = "0.0", inclusive = false)
     @Column
-    private Double precioUnitario;
+    private Double precioUnitarioRecurso;
 
     @Column
-    private Double subtotal;
-
-    @Column(length = 500)
-    private String observaciones;
-
-    @Column(nullable = false)
-    private LocalDateTime fechaAgregado;
+    private Double subtotal_PrecioUnitario;
 
     
     public Long getId() {
@@ -80,52 +79,43 @@ public class ItemMaterial {
         calcularSubtotal();
     }
 
-    public Double getPrecioUnitario() {
-        return precioUnitario;
+    public Double getPrecioUnitarioRecurso() {
+        return precioUnitarioRecurso;
     }
 
-    public void setPrecioUnitario(Double precioUnitario) {
-        this.precioUnitario = precioUnitario;
+    public void setPrecioUnitarioRecurso(Double precioUnitarioRecurso) {
+        this.precioUnitarioRecurso = precioUnitarioRecurso;
         calcularSubtotal();
     }
 
-    public Double getSubtotal() {
-        return subtotal;
+    public Double getSubtotal_PrecioUnitario() {
+        return subtotal_PrecioUnitario;
     }
 
-    public void setSubtotal(Double subtotal) {
-        this.subtotal = subtotal;
+    public void setSubtotal_PrecioUnitario(Double subtotal_PrecioUnitario) {
+        this.subtotal_PrecioUnitario = subtotal_PrecioUnitario;
     }
 
-    public String getObservaciones() {
-        return observaciones;
-    }
+    public String getCodigo() { return codigo; }
+    public void setCodigo(String codigo) { this.codigo = codigo; }
+    
+    public String getDesc_recurso() { return desc_recurso; }
+    public void setDesc_recurso(String desc_recurso) { this.desc_recurso = desc_recurso; }
 
-    public void setObservaciones(String observaciones) {
-        this.observaciones = observaciones;
-    }
-
-    public LocalDateTime getFechaAgregado() {
-        return fechaAgregado;
-    }
-
-    public void setFechaAgregado(LocalDateTime fechaAgregado) {
-        this.fechaAgregado = fechaAgregado;
-    }
 
     // Métodos de conveniencia
     public void calcularSubtotal() {
-        if (cantidad != null && precioUnitario != null) {
-            this.subtotal = precioUnitario * cantidad;
+        if (cantidad != null && precioUnitarioRecurso != null) {
+            this.subtotal_PrecioUnitario = precioUnitarioRecurso * cantidad;
         } else {
-            this.subtotal = 0.0;
+            this.subtotal_PrecioUnitario = 0.0;
         }
     }
 
     // Método para sincronizar precio con el material
     public void sincronizarPrecioConMaterial() {
         if (material != null && material.getCostoUnitario() != null) {
-            this.precioUnitario = material.getCostoUnitario();
+            this.precioUnitarioRecurso = material.getCostoUnitario();
             calcularSubtotal();
         }
     }
@@ -136,12 +126,5 @@ public class ItemMaterial {
         sincronizarPrecioConMaterial();
     }
 
-    // Hook de JPA para sincronizar precio antes de persistir
-    @PrePersist
-    @PreUpdate
-    public void antesDeGuardar() {
-        this.fechaAgregado = LocalDateTime.now();
-        sincronizarPrecioConMaterial();
-    }
 
 }

@@ -49,9 +49,9 @@ public class Proyecto {
     @Column(length = 100)
     private String ubicacion;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "lista_materiales_id", referencedColumnName = "id")
-    private ListaMateriales listaMateriales;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "presupuesto_general_id", referencedColumnName = "id", nullable = false)
+    private Presupuesto_General presupuestoGeneral;
 
     public Long getId() {
         return id;
@@ -141,12 +141,12 @@ public class Proyecto {
         this.ubicacion = ubicacion;
     }
 
-    public ListaMateriales getListaMateriales() {
-        return listaMateriales;
+    public Presupuesto_General getPresupuestoGeneral() {
+        return presupuestoGeneral;
     }
 
-    public void setListaMateriales(ListaMateriales listaMateriales) {
-        this.listaMateriales = listaMateriales;
+    public void setPresupuestoGeneral(Presupuesto_General presupuestoGeneral) {
+        this.presupuestoGeneral = presupuestoGeneral;
         actualizarFechaModificacion();
     }
 

@@ -3,8 +3,6 @@ package com.example.back_vallespejo.models.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,17 +16,12 @@ public class ListaMateriales {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    
     @Column(nullable = false, length = 100)
     private String nombre;
 
     @Column(length = 500)
     private String descripcion;
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
 
     @Column(nullable = false)
     private LocalDateTime fechaCreacion;
@@ -36,16 +29,16 @@ public class ListaMateriales {
     @Column
     private LocalDateTime fechaActualizacion;
 
-    @NotNull
+    
     @Enumerated(EnumType.STRING)
-
     @Column(nullable = false, columnDefinition = "varchar(255) default 'PENDIENTE'")
     private EstadoLista estado;
 
     @Column
     private Double totalEstimado;
 
-    @OneToOne(mappedBy = "listaMateriales", fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "proyecto_id")
     @JsonIgnore
     private Proyecto proyecto;
 
@@ -77,14 +70,6 @@ public class ListaMateriales {
         this.descripcion = descripcion;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
     public LocalDateTime getFechaCreacion() {
         return fechaCreacion;
     }
@@ -110,7 +95,19 @@ public class ListaMateriales {
     }
 
     public Double getTotalEstimado() {
-        return totalEstimado;
+            if (items == null || items.isEmpty()) {
+                this.totalEstimado = 0.0;
+                return totalEstimado;
+            }
+            double suma = 0.0;
+            for (ItemMaterial item : items) {
+                if (item != null) {
+                    item.calcularSubtotal();
+                    suma += item.getSubtotal_PrecioUnitario();
+                }
+            }
+            this.totalEstimado = suma;
+            return totalEstimado;
     }
 
     public void setTotalEstimado(Double totalEstimado) {
