@@ -2,9 +2,12 @@ package com.example.back_vallespejo.controladores;
 
 import com.example.back_vallespejo.models.dto.ProyectoDTO;
 import com.example.back_vallespejo.models.dto.ProyectoCompletoDTO;
+import com.example.back_vallespejo.models.dto.RendimientoInfoDTO;
 import com.example.back_vallespejo.models.entities.Proyecto;
 import com.example.back_vallespejo.service.IProyectoService;
+import com.example.back_vallespejo.service.RendimientoCalculator;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +23,9 @@ public class ProyectoController {
     
     @Autowired
     private IProyectoService proyectoService;
+
+    @Autowired
+    private RendimientoCalculator rendimientoCalculator;
 
 
     @PostMapping("/proyecto/{id}/agregar-actividad")
@@ -69,5 +75,26 @@ public class ProyectoController {
     public ResponseEntity<List<ProyectoCompletoDTO>> getProyectosByUsuario(@PathVariable Long idUsuarioCreador){
         List<ProyectoCompletoDTO> proyectos = proyectoService.findByUsuarioResponsableId(idUsuarioCreador);
         return ResponseEntity.ok(proyectos);
+    }
+
+    /**
+     * Endpoint para obtener una estimación del rendimiento antes de crear la actividad.
+     * Útil para que el usuario sepa qué rendimiento se calculará automáticamente.
+     */
+    @PostMapping("/proyecto/calcular-rendimiento")
+    public ResponseEntity<RendimientoInfoDTO> calcularRendimiento(@RequestBody Map<String, String> request) {
+        String nombreActividad = request.get("nombreActividad");
+        String descripcion = request.getOrDefault("descripcion", "");
+        
+        if (nombreActividad == null || nombreActividad.trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        
+        RendimientoInfoDTO rendimientoInfo = rendimientoCalculator.calcularRendimientoConInfo(
+            nombreActividad, 
+            descripcion
+        );
+        
+        return ResponseEntity.ok(rendimientoInfo);
     }
 }

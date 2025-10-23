@@ -47,6 +47,9 @@ public class ProyectoServiceImpl implements IProyectoService {
     @Autowired
     private IUsuarioService usuarioService;
 
+    @Autowired
+    private RendimientoCalculator rendimientoCalculator;
+
 
     @Override
     public boolean agregarActividadAProyecto(Long proyectoId, String nombreActividad) {
@@ -70,6 +73,31 @@ public class ProyectoServiceImpl implements IProyectoService {
             descPU = descPU.substring(0,50);
         }
         presupuestoUnitario.setDescripcion(descPU);
+
+        // ========== CÁLCULO AUTOMÁTICO DE RENDIMIENTO ==========
+        // Calcular rendimiento basado en el tipo de actividad
+        Double rendimientoCalculado = rendimientoCalculator.calcularRendimiento(
+            nombreActividad, 
+            actividad.getDescripcion()
+        );
+        
+        // Determinar unidad apropiada
+        String unidadCalculada = rendimientoCalculator.determinarUnidad(
+            nombreActividad, 
+            actividad.getDescripcion()
+        );
+        
+        // Determinar tiempo de rendimiento
+        String tiempoRendimiento = rendimientoCalculator.calcularTiempoRendimiento(
+            rendimientoCalculado, 
+            unidadCalculada
+        );
+        
+        // Asignar valores calculados al presupuesto unitario
+        presupuestoUnitario.setU_rendimiento(rendimientoCalculado);
+        presupuestoUnitario.setUnidad(unidadCalculada);
+        presupuestoUnitario.setT_rendimiento(tiempoRendimiento);
+        // ======================================================
 
     U_EquipoyHerramientas listaEquipos = new U_EquipoyHerramientas();
     // Lista de materiales requiere nombre, estado y fechaCreacion no nulos según entidad
